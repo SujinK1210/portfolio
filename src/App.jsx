@@ -7,15 +7,52 @@ import "./styles/App.css";
 
 // Configuration for all pages - easy to extend
 const PAGES_CONFIG = [
-  { id: "landing", component: Landing },
-  { id: "twentyfour", component: TwentyFour },
-  { id: "twentythree", component: TwentyThree },
-  // Future pages: { id: "twentythree", component: TwentyThree },
+  { id: "landing", component: Landing, year: null },
+  { id: "twentyfour", component: TwentyFour, year: "2024" },
+  { id: "twentythree", component: TwentyThree, year: "2023" },
+  // Future pages: { id: "twentytwo", component: TwentyTwo, year: "2022" },
 ];
 
 function App() {
   const [activeSection, setActiveSection] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Function to handle year navigation from timeline
+  const handleYearNavigation = (year) => {
+    const pageIndex = PAGES_CONFIG.findIndex((page) => page.year === year);
+    if (pageIndex !== -1 && pageIndex !== activeSection) {
+      setIsTransitioning(true);
+      setActiveSection(pageIndex);
+      setTimeout(() => setIsTransitioning(false), 800);
+    }
+  };
+
+  // Get current page's year for timeline
+  const getCurrentYear = () => {
+    const currentPage = PAGES_CONFIG[activeSection];
+    return currentPage?.year || "2024";
+  };
+
+  // Handle arrow navigation between pages
+  const handleArrowNavigation = (direction) => {
+    if (isTransitioning) return;
+
+    let newSection = activeSection;
+    if (direction === "up" && activeSection > 0) {
+      newSection = activeSection - 1;
+    } else if (
+      direction === "down" &&
+      activeSection < PAGES_CONFIG.length - 1
+    ) {
+      newSection = activeSection + 1;
+    }
+
+    if (newSection !== activeSection) {
+      setIsTransitioning(true);
+      setActiveSection(newSection);
+      setTimeout(() => setIsTransitioning(false), 800);
+    }
+  };
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -136,28 +173,12 @@ function App() {
             key={page.id}
             active={activeSection === index}
             isTransitioning={isTransitioning}
+            onYearNavigation={handleYearNavigation}
+            onArrowNavigation={handleArrowNavigation}
+            currentYear={getCurrentYear()}
           />
         );
       })}
-
-      {/* Page indicator dots */}
-      <div className="page-indicators">
-        {PAGES_CONFIG.map((_, index) => (
-          <button
-            key={index}
-            className={`page-dot ${activeSection === index ? "active" : ""} ${
-              activeSection === 0 ? "landing-theme" : "dark-theme"
-            }`}
-            onClick={() => {
-              if (!isTransitioning) {
-                setIsTransitioning(true);
-                setActiveSection(index);
-                setTimeout(() => setIsTransitioning(false), 800);
-              }
-            }}
-          />
-        ))}
-      </div>
     </div>
   );
 }

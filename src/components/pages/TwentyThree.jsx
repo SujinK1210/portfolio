@@ -5,13 +5,20 @@ import ChevronUp from "../../assets/svg/ChevronUp";
 import BottomTimeline from "../navigation/BottomTimeline";
 import Navbar from "../navigation/Navbar";
 
-export default function TwentyThree({ active, isTransitioning }) {
+export default function TwentyThree({
+  active,
+  isTransitioning,
+  onYearNavigation,
+  onArrowNavigation,
+  currentYear,
+}) {
   const [activeNavItem, setActiveNavItem] = useState("entrance");
-  const [selectedYear, setSelectedYear] = useState("2017");
 
   const handleYearClick = (year) => {
-    setSelectedYear(year);
     console.log("Selected year:", year);
+    if (onYearNavigation) {
+      onYearNavigation(year);
+    }
   };
 
   return (
@@ -31,10 +38,12 @@ export default function TwentyThree({ active, isTransitioning }) {
 
         {/* Navigation Arrows */}
         <NavigationArrows>
-          <ArrowUp>
+          <ArrowUp onClick={() => onArrowNavigation && onArrowNavigation("up")}>
             <ChevronUp />
           </ArrowUp>
-          <ArrowDown>
+          <ArrowDown
+            onClick={() => onArrowNavigation && onArrowNavigation("down")}
+          >
             <ChevronDown />
           </ArrowDown>
         </NavigationArrows>
@@ -87,7 +96,7 @@ export default function TwentyThree({ active, isTransitioning }) {
 
         {/* Bottom Timeline */}
         <BottomTimeline
-          activeYear={selectedYear}
+          activeYear={currentYear || "2023"}
           onYearClick={handleYearClick}
         />
       </Content>
