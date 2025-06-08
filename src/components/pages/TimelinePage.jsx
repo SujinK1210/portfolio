@@ -108,7 +108,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 4rem;
-  margin-top: 6rem;
+  margin-top: 11rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
@@ -144,7 +144,7 @@ const Subtitle = styled.h4`
 
 const NavigationArrows = styled.div`
   position: absolute;
-  left: 2rem;
+  left: 4rem;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -176,7 +176,7 @@ const ArrowDown = styled.div`
 
 const TimelineSection = styled.div`
   display: flex;
-  gap: 4rem;
+  gap: 2rem;
   flex: 1;
   align-items: flex-start;
   margin-top: 2rem;
@@ -212,9 +212,10 @@ const MainYear = styled.div`
   font-size: 132px;
   font-weight: 800;
   font-style: italic;
-  line-height: 0.8;
+  line-height: 0.7;
   color: #f9f8f6;
-  width: 326px;
+  width: 316px;
+  letter-spacing: -2%;
 `;
 
 const ContentColumn = styled.div`
@@ -288,13 +289,15 @@ const RoleDescription = styled.p`
   letter-spacing: -2%;
   color: #f9f8f6;
   margin-bottom: 1.5rem;
-  max-width: 650px;
+  white-space: pre-line;
 `;
 
 const SkillsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  max-height: 140px;
+  flex-wrap: wrap;
 `;
 
 const SkillItem = styled.div`

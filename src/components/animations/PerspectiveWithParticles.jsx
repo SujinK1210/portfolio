@@ -1,0 +1,194 @@
+import { useEffect, useRef } from "react";
+import styled from "styled-components";
+
+export default function PerspectiveWithParticles() {
+  const canvasRef = useRef(null);
+  const textRef = useRef(null);
+  const particlesRef = useRef([]);
+  const animationFrameRef = useRef(null);
+  const isAnimatingRef = useRef(false);
+  const mouse = useRef({ x: null, y: null, radius: 80 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const textElement = textRef.current;
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const text = "Perspective";
+    const font = "italic 400 250px 'PP Editorial New'"; // Match your text size
+    const triggerRadius = 220;
+
+    // Get text position from the actual DOM element
+    const getTextPosition = () => {
+      const rect = textElement.getBoundingClientRect();
+      return {
+        x: rect.left,
+        y: rect.top + rect.height / 2,
+      };
+    };
+
+    const drawStaticText = () => {
+      // Don't draw anything - let the original text show
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    class Particle {
+      constructor(x, y) {
+        this.baseX = x;
+        this.baseY = y;
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.alpha = 0;
+        this.density = Math.random() * 70 + 1;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(17, 17, 17, ${this.alpha})`; // Match your text color #111
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      update() {
+        const dx = mouse.current.x - this.x;
+        const dy = mouse.current.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < mouse.current.radius) {
+          const forceX = (dx / distance) * this.density;
+          const forceY = (dy / distance) * this.density;
+          this.x -= forceX * 0.1;
+          this.y -= forceY * 0.1;
+          this.alpha = Math.max(0.1, this.alpha - 0.02);
+        } else {
+          const dx = this.baseX - this.x;
+          const dy = this.baseY - this.y;
+          this.x += dx / 10;
+          this.y += dy / 10;
+          this.alpha = Math.min(1, this.alpha + 0.02);
+        }
+      }
+    }
+
+    const initParticles = () => {
+      const textPos = getTextPosition();
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#111";
+      ctx.font = font;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, textPos.x, textPos.y);
+
+      const textData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      particlesRef.current = [];
+
+      for (let y = 0; y < textData.height; y += 2) {
+        for (let x = 0; x < textData.width; x += 2) {
+          const index = (y * textData.width + x) * 4;
+          if (textData.data[index + 3] > 128) {
+            particlesRef.current.push(new Particle(x, y));
+          }
+        }
+      }
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesRef.current.forEach((p) => {
+        p.update();
+        p.draw();
+      });
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    const activateParticles = () => {
+      isAnimatingRef.current = true;
+      initParticles();
+      animate();
+    };
+
+    const resetParticles = () => {
+      isAnimatingRef.current = false;
+      cancelAnimationFrame(animationFrameRef.current);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawStaticText();
+    };
+
+    const handleMouseMove = (e) => {
+      mouse.current.x = e.x;
+      mouse.current.y = e.y;
+
+      const textPos = getTextPosition();
+      const dx = e.x - (textPos.x + 400); // Approximate text center
+      const dy = e.y - textPos.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < triggerRadius) {
+        if (!isAnimatingRef.current) {
+          activateParticles();
+        }
+      } else {
+        if (isAnimatingRef.current) {
+          resetParticles();
+        }
+      }
+    };
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      if (!isAnimatingRef.current) {
+        drawStaticText();
+      } else {
+        initParticles();
+      }
+    };
+
+    drawStaticText();
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, []);
+
+  return (
+    <Container>
+      <PerspectiveText ref={textRef}>Perspective</PerspectiveText>
+      <ParticleCanvas ref={canvasRef} />
+    </Container>
+  );
+}
+
+const Container = styled.div`
+  position: relative;
+`;
+
+const PerspectiveText = styled.div`
+  font-family: "PP Editorial New", serif;
+  font-weight: 400;
+  font-size: 250px;
+  font-style: italic;
+  letter-spacing: 0%;
+  margin-left: 10.8rem;
+  line-height: 166px;
+`;
+
+const ParticleCanvas = styled.canvas`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+`;

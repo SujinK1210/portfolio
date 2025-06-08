@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import PerspectiveWithParticles from "../animations/PerspectiveWithParticles";
 import Navbar from "../navigation/Navbar";
 
 export default function Landing({
@@ -40,9 +41,8 @@ export default function Landing({
             Design <Span>and</Span>
           </DesignText>
         </TitleRow>
-
         <TitleRow>
-          <PerspectiveText>Perspective</PerspectiveText>
+          <PerspectiveWithParticles />
         </TitleRow>
       </Content>
     </LandingContainer>
@@ -181,14 +181,4 @@ const Span = styled.span`
   font-weight: 400;
   font-style: italic;
   font-size: 5rem;
-`;
-
-const PerspectiveText = styled.div`
-  font-family: "PP Editorial New", serif;
-  font-weight: 400;
-  font-size: 250px;
-  font-style: italic;
-  letter-spacing: 0%;
-  margin-left: 10.8rem;
-  line-height: 166px;
 `;
