@@ -5,11 +5,13 @@ import ChevronUp from "../../assets/svg/ChevronUp";
 import BottomTimeline from "../navigation/BottomTimeline";
 import Navbar from "../navigation/Navbar";
 
-export default function TwentyFour({
+export default function TwentyThree({
   active,
   isTransitioning,
+  transitionDirection,
   onYearNavigation,
   onArrowNavigation,
+  onNavbarNavigation,
   currentYear,
 }) {
   const [activeNavItem, setActiveNavItem] = useState("entrance");
@@ -22,10 +24,19 @@ export default function TwentyFour({
   };
 
   return (
-    <TwentyFourContainer active={active} isTransitioning={isTransitioning}>
+    <TwentyContainer
+      active={active}
+      isTransitioning={isTransitioning}
+      transitionDirection={transitionDirection}
+    >
       <Navbar
         activeItem={activeNavItem}
-        onItemClick={setActiveNavItem}
+        onItemClick={(item) => {
+          setActiveNavItem(item);
+          if (onNavbarNavigation) {
+            onNavbarNavigation(item);
+          }
+        }}
         isLandingPage={false}
       />
 
@@ -53,9 +64,9 @@ export default function TwentyFour({
           <YearsColumn>
             <DivRow style={{ marginRight: "4rem" }}>
               <YearLine />
-              <YearLabel>2023</YearLabel>
+              <YearLabel>2024</YearLabel>
             </DivRow>
-            <MainYear>2024</MainYear>
+            <MainYear>2023</MainYear>
           </YearsColumn>
 
           {/* Right Side - Content */}
@@ -96,15 +107,15 @@ export default function TwentyFour({
 
         {/* Bottom Timeline */}
         <BottomTimeline
-          activeYear={currentYear || "2024"}
+          activeYear={currentYear || "2023"}
           onYearClick={handleYearClick}
         />
       </Content>
-    </TwentyFourContainer>
+    </TwentyContainer>
   );
 }
 
-const TwentyFourContainer = styled.div`
+const TwentyContainer = styled.div`
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -113,8 +124,7 @@ const TwentyFourContainer = styled.div`
   background-color: #111;
   color: #f9f8f6;
   opacity: ${(props) => (props.active ? 1 : 0)};
-  transform: translateY(${(props) => (props.active ? "0" : "20px")});
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.8s linear;
   pointer-events: ${(props) => (props.active ? "auto" : "none")};
   overflow: hidden;
   box-sizing: border-box;
@@ -217,6 +227,7 @@ const YearLabel = styled.div`
   margin-bottom: 0.5rem;
   font-style: italic;
   letter-spacing: -2%;
+  width: 120px;
 `;
 
 const YearLine = styled.div`
@@ -234,6 +245,7 @@ const MainYear = styled.div`
   font-style: italic;
   line-height: 0.8;
   color: #f9f8f6;
+  width: 320px;
 `;
 
 const ContentColumn = styled.div`

@@ -2,8 +2,18 @@ import { useState } from "react";
 import styled from "styled-components";
 import Navbar from "../navigation/Navbar";
 
-export default function Landing({ active, isTransitioning }) {
+export default function Landing({
+  active,
+  isTransitioning,
+  onNavigateToTimeline,
+}) {
   const [activeNavItem, setActiveNavItem] = useState("entrance");
+
+  const handleClickToBegin = () => {
+    if (onNavigateToTimeline) {
+      onNavigateToTimeline();
+    }
+  };
 
   return (
     <LandingContainer active={active} isTransitioning={isTransitioning}>
@@ -19,7 +29,10 @@ export default function Landing({ active, isTransitioning }) {
             <Author>Curated by Sujin Kim</Author>
             <Line />
           </AuthorSection>
-          <ScrollHint>Scroll to begin</ScrollHint>
+          <DivCol onClick={handleClickToBegin} style={{ cursor: "pointer" }}>
+            <ClickHint>Click here or</ClickHint>
+            <ScrollHint>Scroll to begin</ScrollHint>
+          </DivCol>
         </HeaderRow>
 
         <TitleRow>
@@ -46,9 +59,14 @@ const LandingContainer = styled.div`
   align-items: center;
   background-color: #f9f8f6;
   color: #111;
-  opacity: ${(props) => (props.active ? 1 : 0)};
-  transform: translateY(${(props) => (props.active ? "0" : "20px")});
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(
+    ${(props) => {
+      if (props.active) return "0vh";
+      // Landing slides up when transitioning to timeline pages
+      return "-100vh";
+    }}
+  );
+  transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   pointer-events: ${(props) => (props.active ? "auto" : "none")};
   overflow: hidden;
   box-sizing: border-box;
@@ -56,19 +74,26 @@ const LandingContainer = styled.div`
   left: 0;
   max-width: 100vw;
   max-height: 100vh;
+  z-index: ${(props) => (props.active ? 10 : 5)};
 `;
 
 const Content = styled.div`
   width: calc(100vw - 160px);
   max-width: 1440px;
   min-height: fit-content;
-  padding: 0 5rem;
-  margin-top: 18vh;
+  padding: 0 58px;
+  margin-top: 30vh;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   overflow: hidden;
   box-sizing: border-box;
+`;
+
+const DivCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 `;
 
 const HeaderRow = styled.div`
@@ -82,16 +107,17 @@ const TitleRow = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  padding-bottom: 20px;
+  padding-bottom: 46px;
 `;
 
 const Header = styled.h1`
   font-family: "PP Editorial New", serif;
   font-style: italic;
   font-weight: 200;
-  font-size: 43px;
+  font-size: 54px;
+  line-height: 88px;
   min-width: fit-content;
-  letter-spacing: -0.1px;
+  letter-spacing: 0%;
   margin-left: 8px;
   margin-bottom: 8px;
 `;
@@ -106,37 +132,48 @@ const AuthorSection = styled.div`
 
 const Author = styled.p`
   font-family: "PP Editorial New", serif;
-  font-size: 19px;
+  font-size: 24px;
   font-style: italic;
+  line-height: 58px;
   font-weight: 200;
   color: #787878;
-  letter-spacing: 0.2px;
+  letter-spacing: 2%;
 `;
 
 const Line = styled.div`
-  border-bottom: 1px solid #787878;
-  width: 75%;
+  border-bottom: 2px solid #787878;
+  width: 80%;
   margin-bottom: 3rem;
 `;
 
-const ScrollHint = styled.p`
+const ClickHint = styled.p`
   font-family: "PP Editorial New", serif;
   font-style: italic;
   font-weight: 200;
-  font-size: 38px;
+  font-size: 18px;
   color: #787878;
   margin: 0;
   letter-spacing: 2px;
   min-width: fit-content;
 `;
+const ScrollHint = styled.p`
+  font-family: "PP Editorial New", serif;
+  font-style: italic;
+  font-weight: 200;
+  font-size: 48px;
+  color: #787878;
+  margin: 0;
+  letter-spacing: -2%;
+  width: 242px;
+`;
 
 const DesignText = styled.div`
   font-family: "PP Editorial New", serif;
   font-weight: 400;
-  font-size: 160px;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.4rem;
-  line-height: 0.8;
+  font-size: 200px;
+  letter-spacing: 0%;
+  margin-bottom: -2.5rem;
+  line-height: 200px;
 `;
 
 const Span = styled.span`
@@ -149,9 +186,9 @@ const Span = styled.span`
 const PerspectiveText = styled.div`
   font-family: "PP Editorial New", serif;
   font-weight: 400;
-  font-size: 200px;
+  font-size: 250px;
   font-style: italic;
-  letter-spacing: -0.05em;
-  margin-left: 8.6rem;
-  line-height: 0.8;
+  letter-spacing: 0%;
+  margin-left: 10.8rem;
+  line-height: 166px;
 `;

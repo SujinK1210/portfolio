@@ -47,25 +47,25 @@ const NavbarContainer = styled.nav`
 `;
 
 const NavItem = styled.div`
-  margin: 0 1.5rem;
-  font-family: "Inter", sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin: 0 24px;
+  font-family: "Museo Sans", serif;
+  font-size: 20px;
+  letter-spacing: -1%;
+  line-height: 22px;
+  margin-top: 22px;
+  width: 92px;
+  text-align: center;
   cursor: pointer;
-  padding-bottom: 0.5rem;
   color: ${(props) => (props.isLandingPage ? "#111" : "#f9f8f6")};
-  border-bottom: ${(props) => {
-    if (props.active) {
-      return props.isLandingPage ? "1px solid #111" : "1px solid #f9f8f6";
-    }
-    return "1px solid transparent";
-  }};
-  transition: all 0.3s ease;
-  font-weight: ${(props) => (props.active ? "500" : "400")};
+  border-bottom: ${(props) =>
+    props.active
+      ? `2px solid ${props.isLandingPage ? "#111111" : "#f9f8f6"}`
+      : "2px solid transparent"};
+  transition: border-bottom 0.3s ease, font-weight 0.3s ease;
+  font-weight: ${(props) =>
+    props.active ? "600" : "400"}; // Change from 500 to 600
 
   &:hover {
-    border-bottom: ${(props) =>
-      props.isLandingPage ? "1px solid #111" : "1px solid #f9f8f6"};
+    border-bottom: 2px solid #111111;
   }
 `;

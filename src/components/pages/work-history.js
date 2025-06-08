@@ -1,0 +1,86 @@
+export const TIMELINE_DATA = {
+  2024: {
+    year: "2024",
+    previousYear: "2023",
+    company: "ADsologist",
+    location: "Marketing Agency Toronto, Canada",
+    duration: "2023.03 - 2024.09",
+    role: "UIUX · Graphic Designer",
+    description:
+      "Initially hired as a Web & Graphic Designer, I quickly took on greater responsibilities and was promoted to Art Director, leading the creative direction of key projects across branding, app development, and experiential design. I collaborated with a multidisciplinary and CGI designers, as well as game developers, to deliver innovative, cross-platform solutions.",
+    skills: [
+      "Branding Design",
+      "App & Game Development",
+      "UI/UX Design",
+      "Graphic Design",
+      "Product Managing",
+    ],
+  },
+  2023: {
+    year: "2023",
+    previousYear: "2022",
+    company: "ADsologist",
+    location: "Marketing Agency Toronto, Canada",
+    duration: "2023.03 - 2024.09",
+    role: "UIUX · Graphic Designer",
+    description:
+      "Initially hired as a Web & Graphic Designer, I quickly took on greater responsibilities and was promoted to Art Director, leading the creative direction of key projects across branding, app development, and experiential design. I collaborated with a multidisciplinary and CGI designers, as well as game developers, to deliver innovative, cross-platform solutions.",
+    skills: [
+      "Branding Design",
+      "App & Game Development",
+      "UI/UX Design",
+      "Graphic Design",
+      "Product Managing",
+    ],
+  },
+  2022: {
+    year: "2022",
+    previousYear: "2021",
+    company: "TechTrans Software",
+    location: "Dispatch IT Tech Toronto, Canada ",
+    duration: "2022.12 - 2023.02",
+    role: "UIUX · Graphic Designer",
+    description:
+      "Led all design initiatives across branding, web, and product experience in a Toronto-based software development company. Took full ownership of UX/UI strategy and execution for a suite of digital tools designed for logistics and dispatch operations. Created comprehensive UI systems and dashboard structures to streamline operational visibility across all user roles. Ensured scalable and intuitive UX patterns, allowing for efficient real-time monitoring of delivery flows, task management, and logistics data.",
+    skills: [
+      "UIUX Design",
+      "App & Web Design",
+      "Dashboard Design",
+      "Graphic Design",
+      "Branding",
+    ],
+  },
+  2021: {
+    year: "2021",
+    previousYear: "2020",
+    company: "ADsologist",
+    location: "Marketing Agency Toronto, Canada",
+    duration: "2023.03 - 2024.09",
+    role: "UIUX · Graphic Designer",
+    description: "",
+    skills: [
+      "Branding Design",
+      "App & Game Development",
+      "UI/UX Design",
+      "Graphic Design",
+      "Product Managing",
+    ],
+  },
+  2020: {
+    year: "2020",
+    previousYear: "2019",
+    company: "ADsologist",
+    location: "Marketing Agency Toronto, Canada",
+    duration: "2023.03 - 2024.09",
+    role: "UIUX · Graphic Designer",
+    description: "",
+    skills: [
+      "Branding Design",
+      "App & Game Development",
+      "UI/UX Design",
+      "Graphic Design",
+      "Product Managing",
+    ],
+  },
+  // Add more years as needed...
+};

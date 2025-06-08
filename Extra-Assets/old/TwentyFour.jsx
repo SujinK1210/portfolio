@@ -5,11 +5,13 @@ import ChevronUp from "../../assets/svg/ChevronUp";
 import BottomTimeline from "../navigation/BottomTimeline";
 import Navbar from "../navigation/Navbar";
 
-export default function TwentyThree({
+export default function TwentyFour({
   active,
   isTransitioning,
   onYearNavigation,
+  transitionDirection,
   onArrowNavigation,
+  onNavbarNavigation,
   currentYear,
 }) {
   const [activeNavItem, setActiveNavItem] = useState("entrance");
@@ -22,10 +24,19 @@ export default function TwentyThree({
   };
 
   return (
-    <TwentyContainer active={active} isTransitioning={isTransitioning}>
+    <TwentyContainer
+      active={active}
+      isTransitioning={isTransitioning}
+      transitionDirection={transitionDirection}
+    >
       <Navbar
         activeItem={activeNavItem}
-        onItemClick={setActiveNavItem}
+        onItemClick={(item) => {
+          setActiveNavItem(item);
+          if (onNavbarNavigation) {
+            onNavbarNavigation(item);
+          }
+        }}
         isLandingPage={false}
       />
 
@@ -53,9 +64,9 @@ export default function TwentyThree({
           <YearsColumn>
             <DivRow style={{ marginRight: "4rem" }}>
               <YearLine />
-              <YearLabel>2024</YearLabel>
+              <YearLabel>2023</YearLabel>
             </DivRow>
-            <MainYear>2023</MainYear>
+            <MainYear>2024</MainYear>
           </YearsColumn>
 
           {/* Right Side - Content */}
@@ -96,7 +107,7 @@ export default function TwentyThree({
 
         {/* Bottom Timeline */}
         <BottomTimeline
-          activeYear={currentYear || "2023"}
+          activeYear={currentYear || "2024"}
           onYearClick={handleYearClick}
         />
       </Content>
@@ -113,8 +124,7 @@ const TwentyContainer = styled.div`
   background-color: #111;
   color: #f9f8f6;
   opacity: ${(props) => (props.active ? 1 : 0)};
-  transform: translateY(${(props) => (props.active ? "0" : "20px")});
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.8s linear;
   pointer-events: ${(props) => (props.active ? "auto" : "none")};
   overflow: hidden;
   box-sizing: border-box;
@@ -217,6 +227,7 @@ const YearLabel = styled.div`
   margin-bottom: 0.5rem;
   font-style: italic;
   letter-spacing: -2%;
+  width: 120px;
 `;
 
 const YearLine = styled.div`
@@ -234,6 +245,7 @@ const MainYear = styled.div`
   font-style: italic;
   line-height: 0.8;
   color: #f9f8f6;
+  width: 320px;
 `;
 
 const ContentColumn = styled.div`

@@ -1,28 +1,58 @@
-/* App.css - Only for main container and navigation elements */
+/* App.css - Fixed navbar and timeline with seamless page sliding */
 
 .app-container {
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
-  overflow-y: auto; /* Allow scrolling for Lenis */
-  overflow-x: hidden;
+  overflow: hidden;
   box-sizing: border-box;
   position: relative;
   max-width: 100vw;
+  background: #111;
 }
 
-/* Scrollable content for Lenis to detect - now visible but thin */
+.content-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Scrollable content for Lenis to detect */
 .scroll-content {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh * 3); /* Updated for 3 pages */
+  height: calc(100vh * 3);
   z-index: -1;
 }
 
 .scroll-section {
   width: 100%;
   height: 100vh;
+}
+
+/* Fixed navbar positioning */
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #111;
+}
+
+/* Fixed timeline positioning */
+.fixed-timeline {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #111;
 }

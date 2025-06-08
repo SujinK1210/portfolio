@@ -1,16 +1,22 @@
 import Lenis from "@studio-freight/lenis";
 import { useEffect, useState } from "react";
+import BottomTimeline from "./components/navigation/BottomTimeline";
+import Navbar from "./components/navigation/Navbar";
 import Landing from "./components/pages/Landing";
-import TwentyFour from "./components/pages/TwentyFour";
-import TwentyThree from "./components/pages/TwentyThree";
+import TimelinePage from "./components/pages/TimelinePage";
+import { TIMELINE_DATA } from "./components/pages/work-history";
 import "./styles/App.css";
 
-// Configuration for all pages - easy to extend
 const PAGES_CONFIG = [
   { id: "landing", component: Landing, year: null },
-  { id: "twentyfour", component: TwentyFour, year: "2024" },
-  { id: "twentythree", component: TwentyThree, year: "2023" },
-  // Future pages: { id: "twentytwo", component: TwentyTwo, year: "2022" },
+  ...Object.keys(TIMELINE_DATA)
+    .sort((a, b) => b - a) // Sort descending: 2025, 2024, 2023...
+    .map((year) => ({
+      id: `year-${year}`,
+      component: TimelinePage,
+      year: year,
+      data: TIMELINE_DATA[year],
+    })),
 ];
 
 function App() {
@@ -23,7 +29,7 @@ function App() {
     if (pageIndex !== -1 && pageIndex !== activeSection) {
       setIsTransitioning(true);
       setActiveSection(pageIndex);
-      setTimeout(() => setIsTransitioning(false), 800);
+      setTimeout(() => setIsTransitioning(false), 1000);
     }
   };
 
@@ -50,7 +56,16 @@ function App() {
     if (newSection !== activeSection) {
       setIsTransitioning(true);
       setActiveSection(newSection);
-      setTimeout(() => setIsTransitioning(false), 800);
+      setTimeout(() => setIsTransitioning(false), 1000);
+    }
+  };
+
+  // Handle navbar navigation to landing
+  const handleNavbarNavigation = (navItem) => {
+    if (navItem === "entrance" && activeSection !== 0) {
+      setIsTransitioning(true);
+      setActiveSection(0);
+      setTimeout(() => setIsTransitioning(false), 1000);
     }
   };
 
@@ -70,7 +85,7 @@ function App() {
       console.log("Scroll detected:", { direction, velocity, activeSection }); // Debug log
 
       // Prevent rapid scrolling during transitions
-      if (isTransitioning || now - lastScrollTime < 800) return;
+      if (isTransitioning || now - lastScrollTime < 1000) return;
 
       // Only trigger on significant scroll velocity
       if (Math.abs(velocity) < 0.3) return; // Lowered threshold
@@ -79,17 +94,13 @@ function App() {
       setIsTransitioning(true);
 
       if (direction === 1 && activeSection < PAGES_CONFIG.length - 1) {
-        // Scroll down - next section
-        console.log("Going to next section:", activeSection + 1);
         setActiveSection((prev) => prev + 1);
       } else if (direction === -1 && activeSection > 0) {
-        // Scroll up - previous section
-        console.log("Going to previous section:", activeSection - 1);
         setActiveSection((prev) => prev - 1);
       }
 
       // Reset transition state
-      setTimeout(() => setIsTransitioning(false), 800);
+      setTimeout(() => setIsTransitioning(false), 1000);
     }
 
     lenis.on("scroll", handleScroll);
@@ -113,7 +124,7 @@ function App() {
     const handleWheel = (e) => {
       const now = Date.now();
 
-      if (isTransitioning || now - lastWheelTime < 800) return;
+      if (isTransitioning || now - lastWheelTime < 1000) return;
 
       const direction = e.deltaY > 0 ? 1 : -1;
 
@@ -128,7 +139,7 @@ function App() {
           setActiveSection((prev) => prev - 1);
         }
 
-        setTimeout(() => setIsTransitioning(false), 800);
+        setTimeout(() => setIsTransitioning(false), 1000);
       }
     };
 
@@ -144,11 +155,11 @@ function App() {
       if (e.key === "ArrowDown" && activeSection < PAGES_CONFIG.length - 1) {
         setIsTransitioning(true);
         setActiveSection((prev) => prev + 1);
-        setTimeout(() => setIsTransitioning(false), 800);
+        setTimeout(() => setIsTransitioning(false), 1000);
       } else if (e.key === "ArrowUp" && activeSection > 0) {
         setIsTransitioning(true);
         setActiveSection((prev) => prev - 1);
-        setTimeout(() => setIsTransitioning(false), 800);
+        setTimeout(() => setIsTransitioning(false), 1000);
       }
     };
 
@@ -158,27 +169,67 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Create actual scrollable content for Lenis */}
-      <div className="scroll-content">
-        {PAGES_CONFIG.map((page) => (
-          <div key={page.id} className="scroll-section" />
-        ))}
+      <Navbar
+        activeItem="entrance"
+        onItemClick={(item) => {
+          if (item === "entrance") {
+            handleNavbarNavigation(item);
+          }
+        }}
+        isLandingPage={activeSection === 0} // This will be true when on Landing page
+      />
+
+      {/* Sliding Content Area */}
+      <div className="content-area">
+        {/* Create actual scrollable content for Lenis */}
+        <div className="scroll-content">
+          {PAGES_CONFIG.map((page) => (
+            <div key={page.id} className="scroll-section" />
+          ))}
+        </div>
+
+        {/* Render page components - Landing stays as is */}
+        {PAGES_CONFIG.map((page, index) => {
+          const PageComponent = page.component;
+
+          // Landing page renders normally
+          if (page.id === "landing") {
+            return (
+              <PageComponent
+                key={page.id}
+                active={activeSection === index}
+                isTransitioning={isTransitioning}
+                onNavigateToTimeline={() => {
+                  if (!isTransitioning) {
+                    setIsTransitioning(true);
+                    setActiveSection(1);
+                    setTimeout(() => setIsTransitioning(false), 1000);
+                  }
+                }}
+              />
+            );
+          }
+
+          // Timeline pages use sliding content
+          return (
+            <PageComponent
+              key={page.id}
+              active={activeSection === index}
+              isTransitioning={isTransitioning}
+              onYearNavigation={handleYearNavigation}
+              onArrowNavigation={handleArrowNavigation}
+              currentYear={getCurrentYear()}
+              pageData={page.data} // Pass the data
+            />
+          );
+        })}
       </div>
 
-      {/* Render actual page components */}
-      {PAGES_CONFIG.map((page, index) => {
-        const PageComponent = page.component;
-        return (
-          <PageComponent
-            key={page.id}
-            active={activeSection === index}
-            isTransitioning={isTransitioning}
-            onYearNavigation={handleYearNavigation}
-            onArrowNavigation={handleArrowNavigation}
-            currentYear={getCurrentYear()}
-          />
-        );
-      })}
+      {/* Fixed Bottom Timeline */}
+      <BottomTimeline
+        activeYear={getCurrentYear()}
+        onYearClick={handleYearNavigation}
+      />
     </div>
   );
 }
