@@ -1,194 +1,204 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 export default function PerspectiveWithParticles() {
   const canvasRef = useRef(null);
-  const textRef = useRef(null);
+  const containerRef = useRef(null);
+  const [isMouseNear, setIsMouseNear] = useState(false);
   const particlesRef = useRef([]);
-  const animationFrameRef = useRef(null);
-  const isAnimatingRef = useRef(false);
-  const mouse = useRef({ x: null, y: null, radius: 80 });
+  const mouseRef = useRef({ x: null, y: null, radius: 100 });
+  const animationIdRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const textElement = textRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
     const ctx = canvas.getContext("2d");
+    let textCoordinates = null;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Mouse move handler
+    const handleMouseMove = (event) => {
+      const rect = container.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-    const text = "Perspective";
-    const font = "italic 400 250px 'PP Editorial New'"; // Match your text size
-    const triggerRadius = 220;
+      mouseRef.current.x = x;
+      mouseRef.current.y = y;
 
-    // Get text position from the actual DOM element
-    const getTextPosition = () => {
-      const rect = textElement.getBoundingClientRect();
-      return {
-        x: rect.left,
-        y: rect.top + rect.height / 2,
-      };
+      // Check distance from center
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const distance = Math.sqrt(
+        Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+      );
+
+      // Trigger particle effect when mouse is within 200px
+      const shouldShowParticles = distance < 200;
+
+      if (shouldShowParticles !== isMouseNear) {
+        setIsMouseNear(shouldShowParticles);
+
+        if (shouldShowParticles && !textCoordinates) {
+          initializeParticles();
+        }
+      }
     };
 
-    const drawStaticText = () => {
-      // Don't draw anything - let the original text show
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    };
-
+    // Particle class
     class Particle {
       constructor(x, y) {
         this.baseX = x;
         this.baseY = y;
         this.x = x;
         this.y = y;
-        this.size = Math.random() * 1.5 + 0.5;
-        this.alpha = 0;
-        this.density = Math.random() * 70 + 1;
+        this.size = Math.random() * 1.2 + 0.3;
+        this.alpha = 0; // Start invisible
+        this.density = Math.random() * 30 + 1;
+        this.targetAlpha = 1;
       }
 
       draw() {
-        ctx.fillStyle = `rgba(17, 17, 17, ${this.alpha})`; // Match your text color #111
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        if (this.alpha > 0) {
+          ctx.fillStyle = `rgba(17, 17, 17, ${this.alpha})`;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       update() {
-        const dx = mouse.current.x - this.x;
-        const dy = mouse.current.y - this.y;
+        // Smooth alpha transitions
+        if (isMouseNear) {
+          this.alpha += (this.targetAlpha - this.alpha) * 0.05;
+        } else {
+          this.alpha += (0 - this.alpha) * 0.05;
+        }
+
+        if (!mouseRef.current.x || !mouseRef.current.y) return;
+
+        const dx = mouseRef.current.x - this.x;
+        const dy = mouseRef.current.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < mouse.current.radius) {
+        if (distance < mouseRef.current.radius) {
           const forceX = (dx / distance) * this.density;
           const forceY = (dy / distance) * this.density;
           this.x -= forceX * 0.1;
           this.y -= forceY * 0.1;
-          this.alpha = Math.max(0.1, this.alpha - 0.02);
+          this.targetAlpha = Math.max(
+            0.1,
+            1 - (distance / mouseRef.current.radius) * 0.8
+          );
         } else {
-          const dx = this.baseX - this.x;
-          const dy = this.baseY - this.y;
-          this.x += dx / 10;
-          this.y += dy / 10;
-          this.alpha = Math.min(1, this.alpha + 0.02);
+          const returnX = (this.baseX - this.x) / 10;
+          const returnY = (this.baseY - this.y) / 10;
+          this.x += returnX;
+          this.y += returnY;
+          this.targetAlpha = 1;
         }
       }
     }
 
-    const initParticles = () => {
-      const textPos = getTextPosition();
+    // Initialize particles from text
+    const initializeParticles = () => {
+      const rect = container.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Draw text to get pixel data
       ctx.fillStyle = "#111";
-      ctx.font = font;
-      ctx.textAlign = "left";
+      ctx.font = `italic 400 ${
+        rect.width * 0.2
+      }px 'PP Editorial New', 'Playfair Display', serif`;
+      ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(text, textPos.x, textPos.y);
+      ctx.fillText("Perspective", rect.width / 2, rect.height / 2);
 
-      const textData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      // Get text pixel data
+      textCoordinates = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Create particles
       particlesRef.current = [];
+      const sampling = 2; // Sample every 2 pixels
 
-      for (let y = 0; y < textData.height; y += 2) {
-        for (let x = 0; x < textData.width; x += 2) {
-          const index = (y * textData.width + x) * 4;
-          if (textData.data[index + 3] > 128) {
+      for (let y = 0; y < textCoordinates.height; y += sampling) {
+        for (let x = 0; x < textCoordinates.width; x += sampling) {
+          const index = (y * textCoordinates.width + x) * 4;
+          const alpha = textCoordinates.data[index + 3];
+
+          if (alpha > 128) {
             particlesRef.current.push(new Particle(x, y));
           }
         }
       }
     };
 
+    // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesRef.current.forEach((p) => {
-        p.update();
-        p.draw();
+
+      particlesRef.current.forEach((particle) => {
+        particle.update();
+        particle.draw();
       });
-      animationFrameRef.current = requestAnimationFrame(animate);
+
+      animationIdRef.current = requestAnimationFrame(animate);
     };
 
-    const activateParticles = () => {
-      isAnimatingRef.current = true;
-      initParticles();
-      animate();
-    };
+    // Start animation
+    animate();
 
-    const resetParticles = () => {
-      isAnimatingRef.current = false;
-      cancelAnimationFrame(animationFrameRef.current);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawStaticText();
-    };
-
-    const handleMouseMove = (e) => {
-      mouse.current.x = e.x;
-      mouse.current.y = e.y;
-
-      const textPos = getTextPosition();
-      const dx = e.x - (textPos.x + 400); // Approximate text center
-      const dy = e.y - textPos.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < triggerRadius) {
-        if (!isAnimatingRef.current) {
-          activateParticles();
-        }
-      } else {
-        if (isAnimatingRef.current) {
-          resetParticles();
-        }
-      }
-    };
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      if (!isAnimatingRef.current) {
-        drawStaticText();
-      } else {
-        initParticles();
-      }
-    };
-
-    drawStaticText();
+    // Event listeners
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("resize", handleResize);
 
+    // Cleanup
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationFrameRef.current);
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
     };
-  }, []);
+  }, [isMouseNear]);
 
   return (
-    <Container>
-      <PerspectiveText ref={textRef}>Perspective</PerspectiveText>
-      <ParticleCanvas ref={canvasRef} />
+    <Container ref={containerRef}>
+      <PerspectiveText show={!isMouseNear}>Perspective</PerspectiveText>
+      <StyledCanvas ref={canvasRef} />
     </Container>
   );
 }
 
 const Container = styled.div`
   position: relative;
+  width: fit-content;
+  height: 300px;
+  margin-left: 11rem;
+  margin-top: -2rem;
 `;
 
-const PerspectiveText = styled.div`
-  font-family: "PP Editorial New", serif;
+const PerspectiveText = styled.h1`
+  font-family: "PP Editorial New", "Playfair Display", serif;
   font-weight: 400;
   font-size: 250px;
   font-style: italic;
+  line-height: 200px;
   letter-spacing: 0%;
-  margin-left: 10.8rem;
-  line-height: 166px;
+  color: #111;
+  margin: 0;
+  opacity: ${(props) => (props.show ? 1 : 0)};
+  transition: opacity 0.4s ease;
+  user-select: none;
 `;
 
-const ParticleCanvas = styled.canvas`
-  position: fixed;
+const StyledCanvas = styled.canvas`
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 100;
 `;

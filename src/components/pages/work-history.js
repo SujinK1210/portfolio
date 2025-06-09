@@ -1,4 +1,6 @@
 export const TIMELINE_DATA = {
+  // you only need to duplicate the object bellow and
+  // change the year and content to create a new page
   2024: {
     year: "2024",
     previousYear: "2023",

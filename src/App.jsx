@@ -6,6 +6,7 @@ import Landing from "./components/pages/Landing";
 import TimelinePage from "./components/pages/TimelinePage";
 import { TIMELINE_DATA } from "./components/pages/work-history";
 import "./styles/App.css";
+import "./styles/fonts.css";
 
 const PAGES_CONFIG = [
   { id: "landing", component: Landing, year: null },
@@ -22,6 +23,14 @@ const PAGES_CONFIG = [
 function App() {
   const [activeSection, setActiveSection] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [triggerLineAnimation, setTriggerLineAnimation] = useState(false);
+
+  // Reset line animation trigger when landing page becomes active
+  useEffect(() => {
+    if (activeSection === 0 && !isTransitioning) {
+      setTriggerLineAnimation(false);
+    }
+  }, [activeSection, isTransitioning]);
 
   // Function to handle year navigation from timeline
   const handleYearNavigation = (year) => {
@@ -29,6 +38,10 @@ function App() {
     if (pageIndex !== -1 && pageIndex !== activeSection) {
       setIsTransitioning(true);
       setActiveSection(pageIndex);
+      // Reset line animation trigger when navigating away from or to landing
+      if (pageIndex === 0 || activeSection === 0) {
+        setTriggerLineAnimation(false);
+      }
       setTimeout(() => setIsTransitioning(false), 1000);
     }
   };
@@ -56,6 +69,10 @@ function App() {
     if (newSection !== activeSection) {
       setIsTransitioning(true);
       setActiveSection(newSection);
+      // Reset line animation trigger when navigating away from or to landing
+      if (newSection === 0 || activeSection === 0) {
+        setTriggerLineAnimation(false);
+      }
       setTimeout(() => setIsTransitioning(false), 1000);
     }
   };
@@ -65,7 +82,18 @@ function App() {
     if (navItem === "entrance" && activeSection !== 0) {
       setIsTransitioning(true);
       setActiveSection(0);
+      // Reset line animation trigger when returning to landing
+      setTriggerLineAnimation(false);
       setTimeout(() => setIsTransitioning(false), 1000);
+    }
+  };
+
+  // Handle line animation trigger from scroll
+  const handleScrollFromLanding = () => {
+    if (activeSection === 0 && !isTransitioning) {
+      setTriggerLineAnimation(true);
+      // Reset trigger after animation
+      setTimeout(() => setTriggerLineAnimation(false), 1500);
     }
   };
 
@@ -91,12 +119,24 @@ function App() {
       if (Math.abs(velocity) < 0.3) return; // Lowered threshold
 
       lastScrollTime = now;
+
+      // Special handling for leaving landing page
+      if (activeSection === 0 && direction === 1) {
+        handleScrollFromLanding();
+        return; // Don't immediately change section, let animation handle it
+      }
+
       setIsTransitioning(true);
 
       if (direction === 1 && activeSection < PAGES_CONFIG.length - 1) {
         setActiveSection((prev) => prev + 1);
       } else if (direction === -1 && activeSection > 0) {
-        setActiveSection((prev) => prev - 1);
+        const newSection = activeSection - 1;
+        setActiveSection(newSection);
+        // Reset line animation trigger when returning to landing
+        if (newSection === 0) {
+          setTriggerLineAnimation(false);
+        }
       }
 
       // Reset transition state
@@ -131,12 +171,24 @@ function App() {
       if (Math.abs(e.deltaY) > 10) {
         // Minimum scroll threshold
         lastWheelTime = now;
+
+        // Special handling for leaving landing page
+        if (activeSection === 0 && direction === 1) {
+          handleScrollFromLanding();
+          return; // Don't immediately change section, let animation handle it
+        }
+
         setIsTransitioning(true);
 
         if (direction === 1 && activeSection < PAGES_CONFIG.length - 1) {
           setActiveSection((prev) => prev + 1);
         } else if (direction === -1 && activeSection > 0) {
-          setActiveSection((prev) => prev - 1);
+          const newSection = activeSection - 1;
+          setActiveSection(newSection);
+          // Reset line animation trigger when returning to landing
+          if (newSection === 0) {
+            setTriggerLineAnimation(false);
+          }
         }
 
         setTimeout(() => setIsTransitioning(false), 1000);
@@ -153,12 +205,23 @@ function App() {
       if (isTransitioning) return;
 
       if (e.key === "ArrowDown" && activeSection < PAGES_CONFIG.length - 1) {
+        // Special handling for leaving landing page
+        if (activeSection === 0) {
+          handleScrollFromLanding();
+          return;
+        }
+
         setIsTransitioning(true);
         setActiveSection((prev) => prev + 1);
         setTimeout(() => setIsTransitioning(false), 1000);
       } else if (e.key === "ArrowUp" && activeSection > 0) {
         setIsTransitioning(true);
-        setActiveSection((prev) => prev - 1);
+        const newSection = activeSection - 1;
+        setActiveSection(newSection);
+        // Reset line animation trigger when returning to landing
+        if (newSection === 0) {
+          setTriggerLineAnimation(false);
+        }
         setTimeout(() => setIsTransitioning(false), 1000);
       }
     };
@@ -199,6 +262,7 @@ function App() {
                 key={page.id}
                 active={activeSection === index}
                 isTransitioning={isTransitioning}
+                triggerTransition={triggerLineAnimation}
                 onNavigateToTimeline={() => {
                   if (!isTransitioning) {
                     setIsTransitioning(true);

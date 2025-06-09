@@ -1,20 +1,154 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import PerspectiveWithParticles from "../animations/PerspectiveWithParticles";
 import Navbar from "../navigation/Navbar";
 
 export default function Landing({
   active,
   isTransitioning,
   onNavigateToTimeline,
+  triggerTransition,
 }) {
   const [activeNavItem, setActiveNavItem] = useState("entrance");
+  const [isLineAnimating, setIsLineAnimating] = useState(false);
+  const canvasRef = useRef(null);
+  const particlesRef = useRef([]);
+  const mouseRef = useRef({ x: null, y: null, radius: 100 });
+  const animationRef = useRef(null);
+
+  // Reset animation state when returning to landing page
+  useEffect(() => {
+    if (active && !isTransitioning) {
+      setIsLineAnimating(false);
+    }
+  }, [active, isTransitioning]);
+
+  // Handle external trigger (from scroll)
+  useEffect(() => {
+    if (triggerTransition && !isLineAnimating) {
+      handleAnimationSequence();
+    }
+  }, [triggerTransition, isLineAnimating]);
+
+  const handleAnimationSequence = () => {
+    if (isLineAnimating || isTransitioning) return;
+
+    console.log("Starting line animation");
+    setIsLineAnimating(true);
+
+    setTimeout(() => {
+      if (onNavigateToTimeline) {
+        onNavigateToTimeline();
+      }
+    }, 700);
+  };
 
   const handleClickToBegin = () => {
-    if (onNavigateToTimeline) {
-      onNavigateToTimeline();
-    }
+    handleAnimationSequence();
   };
+
+  // Initialize canvas and particles
+  useEffect(() => {
+    if (!active) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    // Text styling - now with proper italic
+    const fontSize = 250;
+    ctx.fillStyle = "#111";
+    ctx.font = `italic ${fontSize}px "PP Editorial New"`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Calculate vertical position
+    const textMetrics = ctx.measureText("Perspective");
+    const yPos = canvas.height / 2 + textMetrics.actualBoundingBoxAscent / 2;
+
+    // Draw the base text (semi-transparent for better particle visibility)
+    ctx.globalAlpha = 0.2;
+    ctx.fillText("Perspective", canvas.width / 2, yPos);
+    ctx.globalAlpha = 1;
+
+    // Create a much denser particle field
+    const textData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particlesRef.current = [];
+    // Reduced spacing between particles (from 2px to 1px)
+    for (let y = 0; y < textData.height; y += 1) {
+      for (let x = 0; x < textData.width; x += 1) {
+        const index = (y * textData.width + x) * 4;
+        if (textData.data[index + 3] > 128) {
+          particlesRef.current.push(new Particle(x, y));
+        }
+      }
+    }
+
+    // Animation function
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw base text (subtle background)
+      ctx.globalAlpha = 0.1;
+      ctx.fillText("Perspective", canvas.width / 2, yPos);
+      ctx.globalAlpha = 1;
+
+      particlesRef.current.forEach((p) => {
+        p.update(mouseRef.current);
+        p.draw(ctx);
+      });
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    animate();
+
+    // ... (keep your existing event listeners and cleanup)
+  }, [active]);
+
+  // Modified Particle class for subtler effect
+  class Particle {
+    constructor(x, y) {
+      this.baseX = x;
+      this.baseY = y;
+      this.x = x;
+      this.y = y;
+      this.size = 0.8; // Smaller, more consistent size
+      this.alpha = 1;
+      this.density = Math.random() * 10 + 5; // Reduced movement range
+    }
+
+    draw(ctx) {
+      ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    update(mouse) {
+      const dx = mouse.x - this.x;
+      const dy = mouse.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const maxDistance = 50; // Reduced interaction radius
+
+      if (distance < maxDistance) {
+        const forceDirectionX = dx / distance;
+        const forceDirectionY = dy / distance;
+        const force = (maxDistance - distance) / maxDistance;
+        const directionX = forceDirectionX * force * this.density * 0.2; // Reduced movement
+        const directionY = forceDirectionY * force * this.density * 0.2;
+
+        this.x -= directionX;
+        this.y -= directionY;
+      } else {
+        // Slower return to position
+        this.x += (this.baseX - this.x) * 0.05;
+        this.y += (this.baseY - this.y) * 0.05;
+      }
+    }
+  }
 
   return (
     <LandingContainer active={active} isTransitioning={isTransitioning}>
@@ -28,7 +162,7 @@ export default function Landing({
           <Header>A curated archive of</Header>
           <AuthorSection>
             <Author>Curated by Sujin Kim</Author>
-            <Line />
+            <Line isAnimating={isLineAnimating} />
           </AuthorSection>
           <DivCol onClick={handleClickToBegin} style={{ cursor: "pointer" }}>
             <ClickHint>Click here or</ClickHint>
@@ -42,13 +176,34 @@ export default function Landing({
           </DesignText>
         </TitleRow>
         <TitleRow>
-          <PerspectiveWithParticles />
+          <PerspectiveTextContainer>
+            <PerspectiveCanvas ref={canvasRef} />
+          </PerspectiveTextContainer>
         </TitleRow>
       </Content>
     </LandingContainer>
   );
 }
 
+// Add these new styled components
+const PerspectiveCanvas = styled.canvas`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+`;
+
+const PerspectiveTextContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 250px;
+  margin-left: 11rem;
+  margin-top: -2rem;
+`;
+
+// Keep all your existing styled components the same...
 const LandingContainer = styled.div`
   position: absolute;
   width: 100vw;
@@ -62,7 +217,6 @@ const LandingContainer = styled.div`
   transform: translateY(
     ${(props) => {
       if (props.active) return "0vh";
-      // Landing slides up when transitioning to timeline pages
       return "-100vh";
     }}
   );
@@ -142,8 +296,9 @@ const Author = styled.p`
 
 const Line = styled.div`
   border-bottom: 2px solid #787878;
-  width: 80%;
+  width: ${(props) => (props.isAnimating ? "0%" : "68%")};
   margin-bottom: 3rem;
+  transition: width 0.8s ease-in-out;
 `;
 
 const ClickHint = styled.p`
@@ -156,6 +311,7 @@ const ClickHint = styled.p`
   letter-spacing: 2px;
   min-width: fit-content;
 `;
+
 const ScrollHint = styled.p`
   font-family: "PP Editorial New", serif;
   font-style: italic;

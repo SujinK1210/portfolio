@@ -1,3 +1,13 @@
+/* @import url("https://use.typekit.net/lfr1lhd.css"); */
+
+
+@font-face {
+  font-family: 'PP Editorial New';
+  src: url('/path/to/PPEditorialNew-Italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400;
+}
+
 /* PP Editorial New (Pangram Pangram) */
 @font-face {
   font-family: 'PP Editorial New';
@@ -48,7 +58,7 @@
 }
 
 /* Museo Sans */
-@font-face {
+/* @font-face {
   font-family: 'Museo Sans';
   src: url('../assets/fonts/MSANS/Museo100-Regular.otf') format('opentype');
   font-weight: 100;
@@ -102,7 +112,7 @@
   font-weight: 900;
   font-style: normal;
   font-display: swap;
-}
+} */
 
 /* Playfair Display */
 @font-face {
