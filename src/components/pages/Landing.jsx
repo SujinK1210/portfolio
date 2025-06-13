@@ -176,31 +176,23 @@ export default function Landing({
           </DesignText>
         </TitleRow>
         <TitleRow>
-          <PerspectiveTextContainer>
-            <PerspectiveCanvas ref={canvasRef} />
-          </PerspectiveTextContainer>
+          <PerspectiveTextContainer>Perspective</PerspectiveTextContainer>
         </TitleRow>
       </Content>
     </LandingContainer>
   );
 }
 
-// Add these new styled components
-const PerspectiveCanvas = styled.canvas`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-`;
-
 const PerspectiveTextContainer = styled.div`
+  font-family: "PP Editorial New", serif;
   position: relative;
   width: 100%;
-  height: 250px;
+  height: 350px;
   margin-left: 11rem;
-  margin-top: -2rem;
+  margin-top: -4.8rem;
+  font-size: 250px;
+  font-style: italic;
+  letter-spacing: 0%;
 `;
 
 // Keep all your existing styled components the same...
