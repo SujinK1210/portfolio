@@ -46,7 +46,7 @@ export default function Landing({
     handleAnimationSequence();
   };
 
-  // Initialize canvas and particles
+  // Initialize canvas and particles with CodePen approach
   useEffect(() => {
     if (!active) return;
 
@@ -54,101 +54,129 @@ export default function Landing({
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
 
-    // Text styling - now with proper italic
+    // Set larger canvas size to accommodate full text
+    canvas.width = 1200; // Larger width for "Perspective" at 250px
+    canvas.height = 400; // Larger height for the font size
+
+    const mouse = mouseRef.current;
+
+    // Mouse move handler
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
+      mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    };
+
+    // Mouse leave handler to reset mouse position
+    const handleMouseLeave = () => {
+      mouse.x = null;
+      mouse.y = null;
+    };
+
+    canvas.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener("mouseleave", handleMouseLeave);
+
     const fontSize = 250;
     ctx.fillStyle = "#111";
     ctx.font = `italic ${fontSize}px "PP Editorial New"`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    // Calculate vertical position
-    const textMetrics = ctx.measureText("Perspective");
-    const yPos = canvas.height / 2 + textMetrics.actualBoundingBoxAscent / 2;
-
-    // Draw the base text (semi-transparent for better particle visibility)
-    ctx.globalAlpha = 0.2;
-    ctx.fillText("Perspective", canvas.width / 2, yPos);
-    ctx.globalAlpha = 1;
-
-    // Create a much denser particle field
+    // Draw the text to create particle data
+    ctx.fillText("Perspective", canvas.width / 2, canvas.height / 2);
     const textData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    particlesRef.current = [];
-    // Reduced spacing between particles (from 2px to 1px)
-    for (let y = 0; y < textData.height; y += 1) {
-      for (let x = 0; x < textData.width; x += 1) {
-        const index = (y * textData.width + x) * 4;
-        if (textData.data[index + 3] > 128) {
-          particlesRef.current.push(new Particle(x, y));
+    // Particle class based on CodePen
+    class Particle {
+      constructor(x, y) {
+        this.baseX = x;
+        this.baseY = y;
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 0.6 + 1.4;
+        this.alpha = 1;
+        this.density = Math.random() * 30 + 1;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(1, 1, 1, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      update() {
+        // Only apply mouse interaction if mouse is present
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < mouse.radius) {
+            const forceX = (dx / distance) * this.density;
+            const forceY = (dy / distance) * this.density;
+            this.x -= forceX * 1.6;
+            this.y -= forceY * 1.6;
+            this.alpha -= 0.2;
+            if (this.alpha < 1) this.alpha += 0.1;
+          } else {
+            const dx = this.baseX - this.x;
+            const dy = this.baseY - this.y;
+            this.x += dx / 10;
+            this.y += dy / 10;
+            if (this.alpha < 1) this.alpha += 0.02;
+          }
+        } else {
+          // Return to base position when mouse is not present
+          const dx = this.baseX - this.x;
+          const dy = this.baseY - this.y;
+          this.x += dx / 2;
+          this.y += dy / 2;
+          if (this.alpha < 1) this.alpha += 0.02;
         }
       }
     }
 
-    // Animation function
+    // Initialize particles
+    const initParticles = () => {
+      particlesRef.current = [];
+      for (let y = 0; y < textData.height; y += 1) {
+        for (let x = 0; x < textData.width; x += 1) {
+          const index = (y * textData.width + x) * 4;
+          if (textData.data[index + 3] > 50) {
+            // Lower threshold for more coverage
+            particlesRef.current.push(new Particle(x, y));
+          }
+        }
+      }
+    };
+
+    // Animation loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw base text (subtle background)
-      ctx.globalAlpha = 0.1;
-      ctx.fillText("Perspective", canvas.width / 2, yPos);
-      ctx.globalAlpha = 1;
-
-      particlesRef.current.forEach((p) => {
-        p.update(mouseRef.current);
-        p.draw(ctx);
+      particlesRef.current.forEach((particle) => {
+        particle.update();
+        particle.draw();
       });
+
       animationRef.current = requestAnimationFrame(animate);
     };
+
+    initParticles();
     animate();
 
-    // ... (keep your existing event listeners and cleanup)
-  }, [active]);
-
-  // Modified Particle class for subtler effect
-  class Particle {
-    constructor(x, y) {
-      this.baseX = x;
-      this.baseY = y;
-      this.x = x;
-      this.y = y;
-      this.size = 0.8; // Smaller, more consistent size
-      this.alpha = 1;
-      this.density = Math.random() * 10 + 5; // Reduced movement range
-    }
-
-    draw(ctx) {
-      ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    update(mouse) {
-      const dx = mouse.x - this.x;
-      const dy = mouse.y - this.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const maxDistance = 50; // Reduced interaction radius
-
-      if (distance < maxDistance) {
-        const forceDirectionX = dx / distance;
-        const forceDirectionY = dy / distance;
-        const force = (maxDistance - distance) / maxDistance;
-        const directionX = forceDirectionX * force * this.density * 0.2; // Reduced movement
-        const directionY = forceDirectionY * force * this.density * 0.2;
-
-        this.x -= directionX;
-        this.y -= directionY;
-      } else {
-        // Slower return to position
-        this.x += (this.baseX - this.x) * 0.05;
-        this.y += (this.baseY - this.y) * 0.05;
+    // Cleanup
+    return () => {
+      canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("mouseleave", handleMouseLeave);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
-    }
-  }
+    };
+  }, [active]);
 
   return (
     <LandingContainer active={active} isTransitioning={isTransitioning}>
@@ -176,26 +204,38 @@ export default function Landing({
           </DesignText>
         </TitleRow>
         <TitleRow>
-          <PerspectiveTextContainer>Perspective</PerspectiveTextContainer>
+          <PerspectiveTextContainer>
+            <ParticleCanvas ref={canvasRef} />
+          </PerspectiveTextContainer>
         </TitleRow>
       </Content>
     </LandingContainer>
   );
 }
 
+// Updated styled components
 const PerspectiveTextContainer = styled.div`
   font-family: "PP Editorial New", serif;
   position: relative;
   width: 100%;
-  height: 350px;
+  height: 380px;
   margin-left: 11rem;
-  margin-top: -4.8rem;
+  margin-top: -5.8rem;
   font-size: 250px;
   font-style: italic;
   letter-spacing: 0%;
 `;
 
-// Keep all your existing styled components the same...
+const ParticleCanvas = styled.canvas`
+  position: absolute;
+  top: 0;
+  left: -20px;
+  width: 1200px;
+  height: 100%;
+  background: beige;
+  pointer-events: auto;
+`;
+
 const LandingContainer = styled.div`
   position: absolute;
   width: 100vw;
