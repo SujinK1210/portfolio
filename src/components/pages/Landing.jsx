@@ -55,9 +55,9 @@ export default function Landing({
 
     const ctx = canvas.getContext("2d");
 
-    // Set larger canvas size to accommodate full text
-    canvas.width = 1200; // Larger width for "Perspective" at 250px
-    canvas.height = 400; // Larger height for the font size
+    // Set larger canvas size with extra padding for particle movement
+    canvas.width = 2000; // Increased to ensure no right-side cropping
+    canvas.height = 600; // Increased height for particle animation space
 
     const mouse = mouseRef.current;
 
@@ -72,6 +72,10 @@ export default function Landing({
     const handleMouseLeave = () => {
       mouse.x = null;
       mouse.y = null;
+
+      // Optional: Transition back to text when mouse leaves
+      // Uncomment the line below if you want text to reappear when mouse leaves
+      // isTransitioning = false;
     };
 
     canvas.addEventListener("mousemove", handleMouseMove);
@@ -88,6 +92,11 @@ export default function Landing({
     const textData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Track interaction state
+    let textOpacity = 1;
+    let particleOpacity = 0;
+    let isTransitioning = false;
+
     // Particle class based on CodePen
     class Particle {
       constructor(x, y) {
@@ -98,10 +107,11 @@ export default function Landing({
         this.size = Math.random() * 0.6 + 1.4;
         this.alpha = 1;
         this.density = Math.random() * 30 + 1;
+        this.isAtBase = true;
       }
 
       draw() {
-        ctx.fillStyle = `rgba(1, 1, 1, ${this.alpha})`;
+        ctx.fillStyle = `rgba(1, 1, 1, ${this.alpha * particleOpacity})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -110,6 +120,10 @@ export default function Landing({
       update() {
         // Only apply mouse interaction if mouse is present
         if (mouse.x !== null && mouse.y !== null) {
+          if (!isTransitioning) {
+            isTransitioning = true;
+          }
+
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
@@ -135,6 +149,17 @@ export default function Landing({
           this.x += dx / 2;
           this.y += dy / 2;
           if (this.alpha < 1) this.alpha += 0.02;
+
+          // Check if all particles are back to base to transition back to text
+          const isAtBase =
+            Math.abs(this.x - this.baseX) < 0.5 &&
+            Math.abs(this.y - this.baseY) < 0.5;
+          if (isAtBase && particleOpacity > 0) {
+            // This will be checked in the animation loop
+            this.isAtBase = true;
+          } else {
+            this.isAtBase = false;
+          }
         }
       }
     }
@@ -157,6 +182,42 @@ export default function Landing({
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Check if all particles are back at base when mouse is away
+      const allAtBase =
+        mouse.x === null &&
+        mouse.y === null &&
+        particlesRef.current.every((p) => p.isAtBase);
+
+      // Handle transition
+      // ADJUST THESE VALUES TO CONTROL FADE SPEED:
+      const fadeOutSpeed = 0.5; // Speed when text disappears (mouse enters)
+      const fadeInSpeed = 0.03; // Speed when text reappears (mouse leaves)
+
+      if (isTransitioning && mouse.x !== null && mouse.y !== null) {
+        // Fade out text, fade in particles when mouse is present
+        if (textOpacity > 0) textOpacity -= fadeOutSpeed;
+        if (particleOpacity < 1) particleOpacity += fadeOutSpeed;
+      } else if (allAtBase && particleOpacity > 0) {
+        // Fade back to text when particles return to base
+        if (textOpacity < 1) textOpacity += fadeInSpeed;
+        if (particleOpacity > 0) particleOpacity -= fadeInSpeed;
+        if (textOpacity >= 1 && particleOpacity <= 0) {
+          isTransitioning = false;
+        }
+      }
+
+      // Draw normal text with fading opacity
+      if (textOpacity > 0) {
+        ctx.globalAlpha = textOpacity;
+        ctx.fillStyle = "#111";
+        ctx.font = `italic ${fontSize}px "PP Editorial New"`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Perspective", canvas.width / 2, canvas.height / 2);
+        ctx.globalAlpha = 1;
+      }
+
+      // Always update and draw particles (opacity controlled in particle draw)
       particlesRef.current.forEach((particle) => {
         particle.update();
         particle.draw();
@@ -217,22 +278,23 @@ export default function Landing({
 const PerspectiveTextContainer = styled.div`
   font-family: "PP Editorial New", serif;
   position: relative;
-  width: 100%;
-  height: 380px;
+  width: 1200px; /* Set fixed width to contain the canvas properly */
+  height: 600px; /* Increased to match canvas height */
   margin-left: 11rem;
   margin-top: -5.8rem;
   font-size: 250px;
   font-style: italic;
   letter-spacing: 0%;
+  overflow: visible; /* Ensure canvas isn't clipped */
 `;
 
 const ParticleCanvas = styled.canvas`
   position: absolute;
-  top: 0;
-  left: -20px;
-  width: 1200px;
-  height: 100%;
-  background: beige;
+  top: -100px; /* Adjusted to center the expanded canvas */
+  left: -530px; /* Moved left to center the 2000px canvas */
+  width: 2000px; /* Extra wide to prevent any cropping */
+  height: 600px; /* Match canvas.height */
+  background: transparent;
   pointer-events: auto;
 `;
 

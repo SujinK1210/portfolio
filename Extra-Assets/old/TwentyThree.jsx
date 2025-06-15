@@ -157,18 +157,18 @@ const ChronoHeader = styled.div`
 `;
 
 const Title = styled.h2`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
   margin: 0 0 0.2rem 0;
   letter-spacing: -2%;
   color: #f9f8f6;
 `;
 
 const Subtitle = styled.h4`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
   color: #f9f8f6;
   letter-spacing: -2%;
 `;
@@ -269,7 +269,7 @@ const CompanyInfo = styled.div`
 `;
 
 const CompanyName = styled.h3`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 32px;
   font-weight: 600;
   line-height: 32px;
@@ -312,9 +312,9 @@ const RoleTitle = styled.h4`
 `;
 
 const RoleDescription = styled.p`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
   line-height: 24px;
   letter-spacing: -2%;
   color: #f9f8f6;
@@ -329,7 +329,7 @@ const SkillsList = styled.div`
 `;
 
 const SkillItem = styled.div`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
   font-weight: 300;
   line-height: 24px;

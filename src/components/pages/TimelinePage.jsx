@@ -108,7 +108,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 4rem;
-  margin-top: 11rem;
+  margin-top: 10rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
@@ -126,18 +126,19 @@ const ChronoHeader = styled.div`
 `;
 
 const Title = styled.h2`
-  font-family: "Museo Sans", serif;
-  font-size: 16px;
-  font-weight: 250;
-  margin: 0 0 0.2rem 0;
+  font-family: "museo-sans", sans-serif;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 24px;
   letter-spacing: -2%;
   color: #f9f8f6;
 `;
 
 const Subtitle = styled.h4`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
+  line-height: 24px;
   color: #f9f8f6;
   letter-spacing: -2%;
 `;
@@ -179,12 +180,12 @@ const TimelineSection = styled.div`
   gap: 2rem;
   flex: 1;
   align-items: flex-start;
-  margin-top: 2rem;
+  margin-top: 0.6rem;
 `;
 
 const YearsColumn = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   align-items: flex-end;
   min-width: 200px;
 `;
@@ -192,11 +193,12 @@ const YearsColumn = styled.div`
 const YearLabel = styled.div`
   font-family: "PP Editorial New", serif;
   font-size: 60px;
-  font-weight: 300;
-  margin-bottom: 0.5rem;
+  font-weight: 400;
   font-style: italic;
   letter-spacing: -2%;
   width: 120px;
+  line-height: 60px;
+  margin-top: 24px;
 `;
 
 const YearLine = styled.div`
@@ -209,12 +211,12 @@ const YearLine = styled.div`
 
 const MainYear = styled.div`
   font-family: "PP Editorial New", serif;
-  font-size: 132px;
+  font-size: 120px;
   font-weight: 800;
   font-style: italic;
-  line-height: 0.7;
+  line-height: 120px;
   color: #f9f8f6;
-  width: 316px;
+  width: 286px;
   letter-spacing: -2%;
 `;
 
@@ -223,14 +225,13 @@ const ContentColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-top: 0.4rem;
 `;
 
 const JobSection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.5rem;
+  /* margin-bottom: 0.5rem; */
 `;
 
 const CompanyInfo = styled.div`
@@ -239,35 +240,37 @@ const CompanyInfo = styled.div`
 `;
 
 const CompanyName = styled.h3`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 32px;
   font-weight: 600;
-  line-height: 32px;
+  line-height: 14px;
   letter-spacing: -2%;
   color: #f9f8f6;
+  margin-bottom: 16px;
 `;
 
 const Location = styled.div`
   font-family: "Playfair Display";
   font-size: 24px;
-  font-weight: 300;
+  font-weight: 400;
+  line-height: 32px;
   letter-spacing: -2%;
   color: #f9f8f6;
+  margin-bottom: 32px;
 `;
 
 const Duration = styled.div`
   font-family: "Playfair Display";
-  width: fit-content;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 400;
+  line-height: 32px;
   letter-spacing: -2%;
   color: #f9f8f6;
+  margin-bottom: 32px;
   margin-left: 4rem;
 `;
 
-const RoleSection = styled.div`
-  margin-top: 0.5rem;
-`;
+const RoleSection = styled.div``;
 
 const RoleTitle = styled.h4`
   font-family: "PP Editorial New", serif;
@@ -277,14 +280,15 @@ const RoleTitle = styled.h4`
   letter-spacing: -2%;
   color: #f9f8f6;
   font-style: italic;
-  margin: 0rem 0 2rem 0;
   color: #f9f8f6;
+  margin-bottom: 32px;
 `;
 
 const RoleDescription = styled.p`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
+  opacity: 0.7;
   line-height: 24px;
   letter-spacing: -2%;
   color: #f9f8f6;
@@ -298,10 +302,16 @@ const SkillsList = styled.div`
   gap: 0.3rem;
   max-height: 140px;
   flex-wrap: wrap;
+  font-family: "museo-sans", sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  opacity: 0.7;
+  line-height: 24px;
+  letter-spacing: -2%;
 `;
 
 const SkillItem = styled.div`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
   font-weight: 300;
   line-height: 24px;

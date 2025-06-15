@@ -85,18 +85,18 @@ const ChronoHeader = styled.div`
 `;
 
 const Title = styled.h2`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
   margin: 0 0 0.2rem 0;
   letter-spacing: -2%;
   color: #f9f8f6;
 `;
 
 const Subtitle = styled.h4`
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  font-weight: 250;
+  font-weight: 300;
   color: #f9f8f6;
   letter-spacing: -2%;
 `;

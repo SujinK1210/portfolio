@@ -48,8 +48,7 @@
 
 // // const NavItem = styled.div`
 // //   margin: 0 24px;
-// //   font-family: "Museo Sans", serif;
-// //   font-size: 20px;
+// // font-family: "museo-sans", sans-serif;// //   font-size: 20px;
 // //   letter-spacing: -1%;
 // //   line-height: 22px;
 // //   margin-top: 22px;
@@ -241,8 +240,7 @@
 
 // // const StyledNavItem = styled.div`
 // //   margin: 0 24px;
-// //   font-family: "Museo Sans", serif;
-// //   font-size: 20px;
+// // font-family: "museo-sans", sans-serif;// //   font-size: 20px;
 // //   letter-spacing: -1%;
 // //   line-height: 22px;
 // //   margin-top: 22px;
@@ -432,8 +430,7 @@
 
 // const StyledNavItem = styled.div`
 //   margin: 0 24px;
-//   font-family: "Museo Sans", serif;
-//   font-size: 20px;
+// font-family: "museo-sans", sans-serif;//   font-size: 20px;
 //   letter-spacing: -1%;
 //   line-height: 22px;
 //   margin-top: 22px;
@@ -611,7 +608,7 @@ const NavbarContainer = styled.nav`
 
 const StyledNavItem = styled.div`
   margin: 0 24px;
-  font-family: "Museo Sans", serif;
+  font-family: "museo-sans", sans-serif;
   font-size: 20px;
   letter-spacing: -1%;
   line-height: 22px;
