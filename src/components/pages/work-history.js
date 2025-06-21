@@ -43,7 +43,7 @@ export const TIMELINE_DATA = {
     duration: "2022.12 - 2023.02",
     role: "UIUX · Graphic Designer",
     description:
-      "Led all design initiatives across branding, web, and product experience in a Toronto-based software development company. Took full ownership of UX/UI strategy and execution for a suite of digital tools designed for logistics and dispatch operations. Created comprehensive UI systems and dashboard structures to streamline operational visibility across all user roles. Ensured scalable and intuitive UX patterns, allowing for efficient real-time monitoring of delivery flows, task management, and logistics data.",
+      "Led all design efforts at a Toronto-based software company, owning UX/UI for logistics and dispatch tools. Built scalable UI systems and dashboards to support real-time delivery tracking, task management, and logistics data visibility across user roles.",
     skills: [
       "UIUX Design",
       "App & Web Design",

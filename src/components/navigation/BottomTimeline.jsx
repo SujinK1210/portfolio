@@ -57,8 +57,8 @@ const TimelineContainer = styled.div`
 const LeftDottedLine = styled.div`
   position: absolute;
   top: 2.4rem;
-  left: -150px;
-  width: 160px;
+  left: -80px;
+  width: 100px;
   height: 1px;
   background-image: repeating-linear-gradient(
     to right,
@@ -83,8 +83,8 @@ const ContinuousLine = styled.div`
 const RightDottedLine = styled.div`
   position: absolute;
   top: 2.4rem;
-  right: -150px;
-  width: 150px;
+  right: -80px;
+  width: 100px;
   height: 2px;
   background-image: repeating-linear-gradient(
     to right,
