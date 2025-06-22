@@ -406,7 +406,7 @@ const LogoText = styled.div`
   font-size: 24px;
   letter-spacing: 2px;
   top: 7.6rem;
-  left: 1.4rem;
+  left: 0;
   transform: rotate(-1deg);
   text-align: center;
   line-height: 1.2;
