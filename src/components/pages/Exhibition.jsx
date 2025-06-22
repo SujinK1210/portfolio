@@ -1,13 +1,13 @@
 import { useState } from "react";
 import styled from "styled-components";
+import all01Image from "../../assets/all_01.png";
+import all02Image from "../../assets/all_02.png";
 import FilterContainer from "../exhibition/FilterContainer";
 import ProjectDetail from "../exhibition/ProjectDetail";
 import SplitImageContainer from "../exhibition/SplitImageContainer";
 import WorkGrid from "../exhibition/WorkGrid";
 import { exhibitionData } from "../exhibition/exhibition";
 import Navbar from "../navigation/Navbar";
-import all01Image from "../assets/all_01 1.png";
-import all02Image from "../assets/all_02 1.png";
 
 export default function Exhibition({
   active,
