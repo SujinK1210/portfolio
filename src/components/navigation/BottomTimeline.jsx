@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export default function BottomTimeline({ activeYear = "2024", onYearClick }) {
+  // Clean list of unique years - no suffixes
   const years = [
     "1991",
     "2005",
@@ -10,7 +11,7 @@ export default function BottomTimeline({ activeYear = "2024", onYearClick }) {
     "2019",
     "2020",
     "2021",
-    "2022",
+    "2022", // Just one 2022 entry
     "2023",
     "2024",
     "2025",
@@ -21,7 +22,6 @@ export default function BottomTimeline({ activeYear = "2024", onYearClick }) {
       <LeftDottedLine />
       <ContinuousLine />
       <RightDottedLine />
-
       {years.map((year) => (
         <YearContainer key={year}>
           <TimelineDot
@@ -41,17 +41,22 @@ export default function BottomTimeline({ activeYear = "2024", onYearClick }) {
 }
 
 const TimelineContainer = styled.div`
-  position: relative;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   gap: 2.5rem;
   padding: 2rem 0;
-  margin-top: auto;
-  width: 80;
+  width: 100%;
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
+  z-index: 15;
+  background-color: rgba(17, 17, 17, 0.9);
+  backdrop-filter: blur(10px);
 `;
 
 const LeftDottedLine = styled.div`
@@ -113,12 +118,11 @@ const TimelineDot = styled.div`
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-
   /* Lamppost effect - illuminates both dot and year below */
   ${(props) =>
     props.active &&
     `
-    box-shadow: 
+    box-shadow:
       /* Tight glow around dot */
       0 0 8px #FFF4B7,
       0 0 16px #FFF4B7,
@@ -144,12 +148,11 @@ const TimelineYear = styled.div`
   transition: all 0.3s ease;
   white-space: nowrap;
   font-style: italic;
-
   /* Illuminated text effect when active */
   ${(props) =>
     props.active &&
     `
-    text-shadow: 
+    text-shadow:
       0 0 5px rgba(255, 224, 138, 0.8),
       0 0 10px rgba(255, 224, 138, 0.4);
   `}

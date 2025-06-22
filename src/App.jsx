@@ -2,6 +2,8 @@ import Lenis from "@studio-freight/lenis";
 import { useEffect, useState } from "react";
 import BottomTimeline from "./components/navigation/BottomTimeline";
 import Navbar from "./components/navigation/Navbar";
+import Exhibition from "./components/pages/Exhibition";
+import Invitation from "./components/pages/Invitation";
 import Landing from "./components/pages/Landing";
 import TimelinePage from "./components/pages/TimelinePage";
 import { TIMELINE_DATA } from "./components/pages/work-history";
@@ -11,12 +13,21 @@ import "./styles/fonts.css";
 const PAGES_CONFIG = [
   { id: "landing", component: Landing, year: null },
   ...Object.keys(TIMELINE_DATA)
-    .sort((a, b) => b - a) // Sort descending: 2025, 2024, 2023...
-    .map((year) => ({
-      id: `year-${year}`,
+    .sort((a, b) => {
+      const yearA = parseInt(a.toString().split("-")[0]);
+      const yearB = parseInt(b.toString().split("-")[0]);
+
+      if (yearA !== yearB) {
+        return yearB - yearA;
+      }
+      return a.localeCompare(b);
+    })
+    .map((yearKey) => ({
+      id: `year-${yearKey}`,
       component: TimelinePage,
-      year: year,
-      data: TIMELINE_DATA[year],
+      year: TIMELINE_DATA[yearKey].year,
+      yearKey: yearKey,
+      data: TIMELINE_DATA[yearKey],
     })),
 ];
 
@@ -24,21 +35,22 @@ function App() {
   const [activeSection, setActiveSection] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [triggerLineAnimation, setTriggerLineAnimation] = useState(false);
+  const [currentPage, setCurrentPage] = useState("entrance");
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
-  // Reset line animation trigger when landing page becomes active
   useEffect(() => {
-    if (activeSection === 0 && !isTransitioning) {
+    if (activeSection === 0 && !isTransitioning && currentPage === "entrance") {
       setTriggerLineAnimation(false);
     }
-  }, [activeSection, isTransitioning]);
+  }, [activeSection, isTransitioning, currentPage]);
 
-  // Function to handle year navigation from timeline
   const handleYearNavigation = (year) => {
+    if (currentPage !== "entrance") return;
+
     const pageIndex = PAGES_CONFIG.findIndex((page) => page.year === year);
     if (pageIndex !== -1 && pageIndex !== activeSection) {
       setIsTransitioning(true);
       setActiveSection(pageIndex);
-      // Reset line animation trigger when navigating away from or to landing
       if (pageIndex === 0 || activeSection === 0) {
         setTriggerLineAnimation(false);
       }
@@ -46,15 +58,14 @@ function App() {
     }
   };
 
-  // Get current page's year for timeline
   const getCurrentYear = () => {
-    const currentPage = PAGES_CONFIG[activeSection];
-    return currentPage?.year || "2024";
+    if (currentPage !== "entrance") return "2024";
+    const currentPageConfig = PAGES_CONFIG[activeSection];
+    return currentPageConfig?.year || "2024";
   };
 
-  // Handle arrow navigation between pages
   const handleArrowNavigation = (direction) => {
-    if (isTransitioning) return;
+    if (isTransitioning || currentPage !== "entrance") return;
 
     let newSection = activeSection;
     if (direction === "up" && activeSection > 0) {
@@ -69,7 +80,6 @@ function App() {
     if (newSection !== activeSection) {
       setIsTransitioning(true);
       setActiveSection(newSection);
-      // Reset line animation trigger when navigating away from or to landing
       if (newSection === 0 || activeSection === 0) {
         setTriggerLineAnimation(false);
       }
@@ -77,27 +87,67 @@ function App() {
     }
   };
 
-  // Handle navbar navigation to landing
   const handleNavbarNavigation = (navItem) => {
-    if (navItem === "entrance" && activeSection !== 0) {
-      setIsTransitioning(true);
-      setActiveSection(0);
-      // Reset line animation trigger when returning to landing
-      setTriggerLineAnimation(false);
-      setTimeout(() => setIsTransitioning(false), 1000);
+    console.log(
+      "Navigation clicked:",
+      navItem,
+      "Current page:",
+      currentPage,
+      "Active section:",
+      activeSection
+    );
+
+    if (isTransitioning || isFadingOut) {
+      console.log("Navigation blocked - transitioning or fading");
+      return;
+    }
+
+    if (navItem === "entrance") {
+      if (currentPage !== "entrance" || activeSection !== 0) {
+        console.log("Navigating to entrance landing page"); // Debug log
+        setIsFadingOut(true);
+        setTimeout(() => {
+          setIsTransitioning(true);
+          setCurrentPage("entrance");
+          setActiveSection(0);
+          setTriggerLineAnimation(false);
+          setIsFadingOut(false);
+          setTimeout(() => setIsTransitioning(false), 1000);
+        }, 300);
+      }
+    } else if (navItem === "exhibition" && currentPage !== "exhibition") {
+      console.log("Navigating to exhibition");
+      setIsFadingOut(true);
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentPage("exhibition");
+        setTriggerLineAnimation(false);
+        setIsFadingOut(false);
+        setTimeout(() => setIsTransitioning(false), 1000);
+      }, 300);
+    } else if (navItem === "invitation" && currentPage !== "invitation") {
+      console.log("Navigating to invitation"); // Debug log
+      setIsFadingOut(true);
+      setTimeout(() => {
+        setIsTransitioning(true);
+        setCurrentPage("invitation");
+        setTriggerLineAnimation(false);
+        setIsFadingOut(false);
+        setTimeout(() => setIsTransitioning(false), 1000);
+      }, 300);
     }
   };
 
-  // Handle line animation trigger from scroll
   const handleScrollFromLanding = () => {
-    if (activeSection === 0 && !isTransitioning) {
+    if (activeSection === 0 && !isTransitioning && currentPage === "entrance") {
       setTriggerLineAnimation(true);
-      // Reset trigger after animation
       setTimeout(() => setTriggerLineAnimation(false), 1500);
     }
   };
 
   useEffect(() => {
+    if (currentPage !== "entrance") return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -110,20 +160,17 @@ function App() {
     function handleScroll({ direction, velocity }) {
       const now = Date.now();
 
-      console.log("Scroll detected:", { direction, velocity, activeSection }); // Debug log
+      console.log("Scroll detected:", { direction, velocity, activeSection });
 
-      // Prevent rapid scrolling during transitions
       if (isTransitioning || now - lastScrollTime < 1000) return;
 
-      // Only trigger on significant scroll velocity
-      if (Math.abs(velocity) < 0.3) return; // Lowered threshold
+      if (Math.abs(velocity) < 0.3) return;
 
       lastScrollTime = now;
 
-      // Special handling for leaving landing page
       if (activeSection === 0 && direction === 1) {
         handleScrollFromLanding();
-        return; // Don't immediately change section, let animation handle it
+        return;
       }
 
       setIsTransitioning(true);
@@ -133,13 +180,11 @@ function App() {
       } else if (direction === -1 && activeSection > 0) {
         const newSection = activeSection - 1;
         setActiveSection(newSection);
-        // Reset line animation trigger when returning to landing
         if (newSection === 0) {
           setTriggerLineAnimation(false);
         }
       }
 
-      // Reset transition state
       setTimeout(() => setIsTransitioning(false), 1000);
     }
 
@@ -155,10 +200,11 @@ function App() {
     return () => {
       lenis.destroy();
     };
-  }, [activeSection, isTransitioning]);
+  }, [activeSection, isTransitioning, currentPage]);
 
-  // Alternative: Use wheel event as backup
   useEffect(() => {
+    if (currentPage !== "entrance") return;
+
     let lastWheelTime = 0;
 
     const handleWheel = (e) => {
@@ -169,13 +215,11 @@ function App() {
       const direction = e.deltaY > 0 ? 1 : -1;
 
       if (Math.abs(e.deltaY) > 10) {
-        // Minimum scroll threshold
         lastWheelTime = now;
 
-        // Special handling for leaving landing page
         if (activeSection === 0 && direction === 1) {
           handleScrollFromLanding();
-          return; // Don't immediately change section, let animation handle it
+          return;
         }
 
         setIsTransitioning(true);
@@ -197,10 +241,12 @@ function App() {
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);
-  }, [activeSection, isTransitioning]);
+  }, [activeSection, isTransitioning, currentPage]);
 
-  // Keyboard navigation
+  // Keyboard navigation for entrance pages only
   useEffect(() => {
+    if (currentPage !== "entrance") return;
+
     const handleKeyDown = (e) => {
       if (isTransitioning) return;
 
@@ -228,72 +274,108 @@ function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeSection, isTransitioning]);
+  }, [activeSection, isTransitioning, currentPage]);
 
   return (
     <div className="app-container">
-      <Navbar
-        activeItem="entrance"
-        onItemClick={(item) => {
-          if (item === "entrance") {
-            handleNavbarNavigation(item);
-          }
-        }}
-        isLandingPage={activeSection === 0} // This will be true when on Landing page
-      />
+      {/* Sliding Content Area for Entrance Pages */}
+      {currentPage === "entrance" && (
+        <>
+          <div
+            className="content-area"
+            style={{
+              opacity: isFadingOut ? 0 : 1,
+              transition: "opacity 0.3s ease-out",
+            }}
+          >
+            {/* Create actual scrollable content for Lenis */}
+            <div className="scroll-content">
+              {PAGES_CONFIG.map((page) => (
+                <div key={page.id} className="scroll-section" />
+              ))}
+            </div>
 
-      {/* Sliding Content Area */}
-      <div className="content-area">
-        {/* Create actual scrollable content for Lenis */}
-        <div className="scroll-content">
-          {PAGES_CONFIG.map((page) => (
-            <div key={page.id} className="scroll-section" />
-          ))}
-        </div>
+            {/* Render page components - Landing stays as is */}
+            {PAGES_CONFIG.map((page, index) => {
+              const PageComponent = page.component;
 
-        {/* Render page components - Landing stays as is */}
-        {PAGES_CONFIG.map((page, index) => {
-          const PageComponent = page.component;
+              // Landing page renders normally
+              if (page.id === "landing") {
+                return (
+                  <PageComponent
+                    key={page.id}
+                    active={activeSection === index}
+                    isTransitioning={isTransitioning}
+                    triggerTransition={triggerLineAnimation}
+                    onNavigateToTimeline={() => {
+                      if (!isTransitioning) {
+                        setIsTransitioning(true);
+                        setActiveSection(1);
+                        setTimeout(() => setIsTransitioning(false), 1000);
+                      }
+                    }}
+                    onNavbarNavigation={handleNavbarNavigation}
+                  />
+                );
+              }
 
-          // Landing page renders normally
-          if (page.id === "landing") {
-            return (
-              <PageComponent
-                key={page.id}
-                active={activeSection === index}
-                isTransitioning={isTransitioning}
-                triggerTransition={triggerLineAnimation}
-                onNavigateToTimeline={() => {
-                  if (!isTransitioning) {
-                    setIsTransitioning(true);
-                    setActiveSection(1);
-                    setTimeout(() => setIsTransitioning(false), 1000);
-                  }
-                }}
-              />
-            );
-          }
+              // Timeline pages use sliding content
+              return (
+                <PageComponent
+                  key={page.id}
+                  active={activeSection === index}
+                  isTransitioning={isTransitioning}
+                  onYearNavigation={handleYearNavigation}
+                  onArrowNavigation={handleArrowNavigation}
+                  onNavbarNavigation={handleNavbarNavigation}
+                  currentYear={getCurrentYear()}
+                  pageData={page.data} // Pass the data
+                />
+              );
+            })}
+          </div>
 
-          // Timeline pages use sliding content
-          return (
-            <PageComponent
-              key={page.id}
-              active={activeSection === index}
-              isTransitioning={isTransitioning}
-              onYearNavigation={handleYearNavigation}
-              onArrowNavigation={handleArrowNavigation}
-              currentYear={getCurrentYear()}
-              pageData={page.data} // Pass the data
+          {/* Fixed Bottom Timeline for Timeline Pages Only */}
+          {activeSection > 0 && (
+            <BottomTimeline
+              activeYear={getCurrentYear()}
+              onYearClick={handleYearNavigation}
             />
-          );
-        })}
-      </div>
+          )}
+        </>
+      )}
 
-      {/* Fixed Bottom Timeline */}
-      <BottomTimeline
-        activeYear={getCurrentYear()}
-        onYearClick={handleYearNavigation}
-      />
+      {/* Exhibition Page */}
+      {currentPage === "exhibition" && (
+        <div
+          style={{
+            opacity: isFadingOut ? 0 : 1,
+            transition: "opacity 0.3s ease-out",
+          }}
+        >
+          <Exhibition
+            active={true}
+            isTransitioning={isTransitioning}
+            onNavbarNavigation={handleNavbarNavigation}
+          />
+        </div>
+      )}
+
+      {/* Invitation Page */}
+      {currentPage === "invitation" && (
+        <div
+          style={{
+            opacity: isFadingOut ? 0 : 1,
+            transition: "opacity 0.3s ease-out",
+          }}
+        >
+          <Invitation
+            active={true}
+            isTransitioning={isTransitioning}
+            onNavbarNavigation={handleNavbarNavigation}
+          />
+        </div>
+      )}
     </div>
   );
 }

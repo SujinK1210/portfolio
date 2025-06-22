@@ -7,8 +7,8 @@ export default function Landing({
   isTransitioning,
   onNavigateToTimeline,
   triggerTransition,
+  onNavbarNavigation,
 }) {
-  const [activeNavItem, setActiveNavItem] = useState("entrance");
   const [isLineAnimating, setIsLineAnimating] = useState(false);
   const canvasRef = useRef(null);
   const particlesRef = useRef([]);
@@ -242,8 +242,12 @@ export default function Landing({
   return (
     <LandingContainer active={active} isTransitioning={isTransitioning}>
       <Navbar
-        activeItem={activeNavItem}
-        onItemClick={setActiveNavItem}
+        activeItem="entrance"
+        onItemClick={(item) => {
+          if (onNavbarNavigation) {
+            onNavbarNavigation(item);
+          }
+        }}
         isLandingPage={true}
       />
       <Content>

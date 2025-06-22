@@ -1,16 +1,13 @@
 import styled from "styled-components";
 import ChevronDown from "../../assets/svg/ChevronDown";
 import ChevronUp from "../../assets/svg/ChevronUp";
-import BottomTimeline from "../navigation/BottomTimeline";
 import Navbar from "../navigation/Navbar";
 
 export default function TimelinePage({
   active,
   isTransitioning,
-  onYearNavigation,
   onArrowNavigation,
   onNavbarNavigation,
-  currentYear,
   pageData,
 }) {
   return (
@@ -74,11 +71,6 @@ export default function TimelinePage({
             </RoleSection>
           </ContentColumn>
         </TimelineSection>
-
-        <BottomTimeline
-          activeYear={currentYear}
-          onYearClick={onYearNavigation}
-        />
       </Content>
     </TimelineContainer>
   );

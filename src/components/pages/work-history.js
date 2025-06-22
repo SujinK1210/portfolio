@@ -35,7 +35,7 @@ export const TIMELINE_DATA = {
       "Product Managing",
     ],
   },
-  2022: {
+  "2022-a": {
     year: "2022",
     previousYear: "2021",
     company: "TechTrans Software",
@@ -51,6 +51,16 @@ export const TIMELINE_DATA = {
       "Graphic Design",
       "Branding",
     ],
+  },
+  "2022-b": {
+    year: "2022",
+    previousYear: "2021",
+    company: "",
+    location: "",
+    duration: "",
+    role: "",
+    description: "",
+    skills: [],
   },
   2021: {
     year: "2021",
