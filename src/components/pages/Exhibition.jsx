@@ -6,6 +6,8 @@ import SplitImageContainer from "../exhibition/SplitImageContainer";
 import WorkGrid from "../exhibition/WorkGrid";
 import { exhibitionData } from "../exhibition/exhibition";
 import Navbar from "../navigation/Navbar";
+import all01Image from "../assets/all_01 1.png";
+import all02Image from "../assets/all_02 1.png";
 
 export default function Exhibition({
   active,
@@ -30,11 +32,11 @@ export default function Exhibition({
 
   const imageData = {
     topImage: {
-      src: "src/assets/all_01 1.png",
+      src: all01Image,
       alt: "Project preview bottom",
     },
     bottomImage: {
-      src: "src/assets/all_02 1.png",
+      src: all02Image,
       alt: "Project preview top",
     },
   };
