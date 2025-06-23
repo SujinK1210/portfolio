@@ -70,17 +70,15 @@ const AnimatedNavItem = ({ text, active, onClick, isLandingPage }) => {
 
   return (
     <StyledNavItem
-      $active={active} // Changed to transient prop
+      active={active}
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      $isLandingPage={isLandingPage} // Changed to transient prop
-      $isAnimating={isAnimating} // Changed to transient prop
+      isLandingPage={isLandingPage}
+      isAnimating={isAnimating}
     >
       {displayText.split("").map((char, index) => (
-        <Letter key={`${text}-${index}`} $isAnimating={isAnimating}>
-          {char}
-        </Letter>
+        <Letter key={`${text}-${index}`}>{char}</Letter>
       ))}
     </StyledNavItem>
   );
@@ -92,9 +90,7 @@ export default function Navbar({
   isLandingPage = false,
 }) {
   return (
-    <NavbarContainer $isLandingPage={isLandingPage}>
-      {" "}
-      {/* Changed to transient prop */}
+    <NavbarContainer isLandingPage={isLandingPage}>
       <AnimatedNavItem
         text="Entrance"
         active={activeItem === "entrance"}
@@ -133,14 +129,9 @@ const NavbarContainer = styled.nav`
   justify-content: center;
   align-items: center;
   padding: 1.5rem 0;
-  background-color: ${(props) =>
-    props.$isLandingPage ? "#f9f8f6" : "#111"}; // Changed to $isLandingPage
+  background-color: ${(props) => (props.isLandingPage ? "#f9f8f6" : "#111")};
   z-index: 20;
   transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  @media (max-width: 480px) {
-    padding: 0;
-    margin: 0 auto;
-  }
 `;
 
 const StyledNavItem = styled.div`
@@ -153,24 +144,18 @@ const StyledNavItem = styled.div`
   width: 92px;
   text-align: center;
   cursor: pointer;
-  color: ${(props) =>
-    props.$isLandingPage ? "#111" : "#f9f8f6"}; // Changed to $isLandingPage
+  color: ${(props) => (props.isLandingPage ? "#111" : "#f9f8f6")};
   border-bottom: ${(props) =>
-    props.$active // Changed to $active
-      ? `2px solid ${props.$isLandingPage ? "#111111" : "#f9f8f6"}` // Changed to $isLandingPage
+    props.active
+      ? `2px solid ${props.isLandingPage ? "#111111" : "#f9f8f6"}`
       : "2px solid transparent"};
   transition: border-bottom 0.3s ease, font-weight 0.3s ease;
-  font-weight: ${(props) =>
-    props.$active ? "600" : "400"}; // Changed to $active
+  font-weight: ${(props) => (props.active ? "600" : "400")};
 
   display: flex;
   justify-content: center;
   align-items: center;
   perspective: 200px;
-  @media (max-width: 480px) {
-    font-size: 17px;
-    margin: 22px 12px;
-  }
 `;
 
 const Letter = styled.span`
@@ -181,7 +166,7 @@ const Letter = styled.span`
   transition: transform 0.2s ease;
 
   ${(props) =>
-    props.$isAnimating && // Changed to $isAnimating
+    props.isAnimating &&
     `
     animation: ${flipLetter} 0.3s ease-in-out;
   `}
