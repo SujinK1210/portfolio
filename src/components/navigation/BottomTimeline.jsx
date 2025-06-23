@@ -57,6 +57,9 @@ const TimelineContainer = styled.div`
   z-index: 15;
   background-color: rgba(17, 17, 17, 0.9);
   backdrop-filter: blur(10px);
+  @media (max-width: 780px) {
+    display: none;
+  }
 `;
 
 const LeftDottedLine = styled.div`
