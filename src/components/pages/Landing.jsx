@@ -274,7 +274,7 @@ export default function Landing({
   }, [active]);
 
   return (
-    <LandingContainer active={active} isTransitioning={isTransitioning}>
+    <LandingContainer $active={active} $isTransitioning={isTransitioning}>
       <Navbar
         activeItem="entrance"
         onItemClick={(item) => {
@@ -289,7 +289,7 @@ export default function Landing({
           <Header>A curated archive of</Header>
           <AuthorSection>
             <Author>Curated by Sujin Kim</Author>
-            <Line isAnimating={isLineAnimating} />
+            <Line $isAnimating={isLineAnimating} />
           </AuthorSection>
           <DivCol onClick={handleClickToBegin} style={{ cursor: "pointer" }}>
             <ClickHint>Click here or</ClickHint>
@@ -348,19 +348,19 @@ const LandingContainer = styled.div`
   color: #111;
   transform: translateY(
     ${(props) => {
-      if (props.active) return "0vh";
+      if (props.$active) return "0vh";
       return "-100vh";
     }}
   );
   transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  pointer-events: ${(props) => (props.active ? "auto" : "none")};
+  pointer-events: ${(props) => (props.$active ? "auto" : "none")};
   overflow: hidden;
   box-sizing: border-box;
   top: 0;
   left: 0;
   max-width: 100vw;
   max-height: 100vh;
-  z-index: ${(props) => (props.active ? 10 : 5)};
+  z-index: ${(props) => (props.$active ? 10 : 5)};
 `;
 
 const Content = styled.div`
@@ -428,7 +428,7 @@ const Author = styled.p`
 
 const Line = styled.div`
   border-bottom: 2px solid #787878;
-  width: ${(props) => (props.isAnimating ? "0%" : "68%")};
+  width: ${(props) => (props.$isAnimating ? "0%" : "68%")};
   margin-bottom: 3rem;
   transition: width 0.8s ease-in-out;
 `;

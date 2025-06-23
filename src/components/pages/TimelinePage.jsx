@@ -11,7 +11,7 @@ export default function TimelinePage({
   pageData,
 }) {
   return (
-    <TimelineContainer active={active} isTransitioning={isTransitioning}>
+    <TimelineContainer $active={active} $isTransitioning={isTransitioning}>
       <Navbar
         activeItem="entrance"
         onItemClick={(item) => {
@@ -49,26 +49,62 @@ export default function TimelinePage({
           </YearsColumn>
 
           <ContentColumn>
-            <JobSection>
-              <CompanyInfo>
-                <CompanyName>{pageData.company}</CompanyName>
-                <DivRow>
-                  <Location>{pageData.location}</Location>
-                  <Duration>{pageData.duration}</Duration>
-                </DivRow>
-              </CompanyInfo>
-            </JobSection>
+            {/* Check if pageData has entries array (multiple experiences) or single experience */}
+            {pageData.entries ? (
+              // Render multiple entries for the same year
+              pageData.entries.map((entry, index) => (
+                <ExperienceBlock key={index}>
+                  <JobSection>
+                    <CompanyInfo>
+                      <CompanyName>{entry.company}</CompanyName>
+                      <DivRow>
+                        <Location>{entry.location}</Location>
+                        <Duration>{entry.duration}</Duration>
+                      </DivRow>
+                    </CompanyInfo>
+                  </JobSection>
 
-            <RoleSection>
-              <RoleTitle>{pageData.role}</RoleTitle>
-              <RoleDescription>{pageData.description}</RoleDescription>
+                  <RoleSection>
+                    <RoleTitle>{entry.role}</RoleTitle>
+                    <RoleDescription>{entry.description}</RoleDescription>
 
-              <SkillsList>
-                {pageData.skills.map((skill, index) => (
-                  <SkillItem key={index}>• {skill}</SkillItem>
-                ))}
-              </SkillsList>
-            </RoleSection>
+                    <SkillsList>
+                      {entry.skills &&
+                        entry.skills.length > 0 &&
+                        entry.skills.map((skill, skillIndex) => (
+                          <SkillItem key={skillIndex}>• {skill}</SkillItem>
+                        ))}
+                    </SkillsList>
+                  </RoleSection>
+                </ExperienceBlock>
+              ))
+            ) : (
+              // Render single experience (original structure)
+              <ExperienceBlock>
+                <JobSection>
+                  <CompanyInfo>
+                    <CompanyName>{pageData.company}</CompanyName>
+                    <DivRow>
+                      <Location>{pageData.location}</Location>
+                      <Duration>{pageData.duration}</Duration>
+                    </DivRow>
+                  </CompanyInfo>
+                </JobSection>
+
+                <RoleSection>
+                  <RoleTitle>{pageData.role}</RoleTitle>
+                  <RoleDescription>{pageData.description}</RoleDescription>
+
+                  <SkillsList>
+                    {pageData.skills &&
+                      pageData.skills.length > 0 &&
+                      pageData.skills.map((skill, index) => (
+                        <SkillItem key={index}>• {skill}</SkillItem>
+                      ))}
+                  </SkillsList>
+                </RoleSection>
+              </ExperienceBlock>
+            )}
           </ContentColumn>
         </TimelineSection>
       </Content>
@@ -76,7 +112,10 @@ export default function TimelinePage({
   );
 }
 
-const TimelineContainer = styled.div`
+// Fixed styled components with shouldForwardProp to prevent DOM warnings
+const TimelineContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["active", "isTransitioning"].includes(prop),
+})`
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -84,9 +123,9 @@ const TimelineContainer = styled.div`
   flex-direction: column;
   background-color: #111;
   color: #f9f8f6;
-  opacity: ${(props) => (props.active ? 1 : 0)};
+  opacity: ${(props) => (props.$active ? 1 : 0)};
   transition: opacity 0.8s linear;
-  pointer-events: ${(props) => (props.active ? "auto" : "none")};
+  pointer-events: ${(props) => (props.$active ? "auto" : "none")};
   overflow: hidden;
   box-sizing: border-box;
   top: 0;
@@ -208,7 +247,7 @@ const MainYear = styled.div`
   font-style: italic;
   line-height: 120px;
   color: #f9f8f6;
-  width: 286px;
+  width: 302px;
   letter-spacing: -2%;
 `;
 
@@ -216,14 +255,21 @@ const ContentColumn = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 2rem; /* Added gap between multiple experience blocks */
+`;
+
+/* New wrapper for each experience block */
+const ExperienceBlock = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
+  margin-bottom: 1rem;
 `;
 
 const JobSection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  /* margin-bottom: 0.5rem; */
 `;
 
 const CompanyInfo = styled.div`

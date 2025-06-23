@@ -55,12 +55,31 @@ export const TIMELINE_DATA = {
   "2022-b": {
     year: "2022",
     previousYear: "2021",
-    company: "",
-    location: "",
-    duration: "",
-    role: "",
-    description: "",
-    skills: [],
+    entries: [
+      {
+        company: "Italian Bistro/Theatre/ Michelin Omakase",
+        location: "Toronto, Canada",
+        duration: "2022.04 - 11",
+        role: "Server & Bartender",
+        description: "",
+        skills: [],
+      },
+      {
+        company: "Fanshawe College",
+        location: "London, Canada",
+        duration: "2022.05",
+        role: "Graphic Design Advance Diploma",
+        description:
+          "Trained in cross-disciplinary design with a hands-on focus in branding, illustration, packaging, and interactive UX — shaping visuals that serve real user experience.",
+        skills: [
+          "Cross-disciplinary Design",
+          "Branding",
+          "Illustration",
+          "Packaging Design",
+          "Interactive UX",
+        ],
+      },
+    ],
   },
   2021: {
     year: "2021",
