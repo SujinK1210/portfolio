@@ -137,11 +137,6 @@ const NavbarContainer = styled.nav`
     props.$isLandingPage ? "#f9f8f6" : "#111"}; // Changed to $isLandingPage
   z-index: 20;
   transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-
-  @media (max-width: 480px) {
-    padding: 0;
-    margin: 0 auto;
-  }
 `;
 
 const StyledNavItem = styled.div`
@@ -168,10 +163,6 @@ const StyledNavItem = styled.div`
   justify-content: center;
   align-items: center;
   perspective: 200px;
-  @media (max-width: 480px) {
-    font-size: 17px;
-    margin: 22px 12px;
-  }
 `;
 
 const Letter = styled.span`
