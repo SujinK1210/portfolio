@@ -75,7 +75,7 @@ export default function Landing({
 
       // Optional: Transition back to text when mouse leaves
       // Uncomment the line below if you want text to reappear when mouse leaves
-      // isTransitioning = false;
+      isTransitioning = false;
     };
 
     canvas.addEventListener("mousemove", handleMouseMove);
