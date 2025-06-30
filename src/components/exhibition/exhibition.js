@@ -9,6 +9,20 @@ export const exhibitionData = [
     image: "beauty-supplement.jpg",
     category: "BRANDING",
     tags: ["BRANDING"],
+    // New detailed content for project detail layout
+    detailImages: {
+      hero1: "beauty-supplement-hero1.jpg",
+      hero2: "beauty-supplement-hero2.jpg",
+      sideImage1: "beauty-supplement-side1.jpg",
+      sideImage2: "beauty-supplement-side2.jpg",
+      final: "beauty-supplement-final.jpg",
+    },
+    highlights: [
+      "Creative concept development and execution",
+      "Brand strategy and visual identity design",
+      "Multi-platform design consistency",
+      "Client collaboration and project management",
+    ],
   },
   {
     id: 2,
@@ -20,6 +34,19 @@ export const exhibitionData = [
     image: "logo-design.jpg",
     category: "BRANDING",
     tags: ["BRANDING", "GRAPHIC"],
+    detailImages: {
+      hero1: "logo-design-hero1.jpg",
+      hero2: "logo-design-hero2.jpg",
+      sideImage1: "logo-design-side1.jpg",
+      sideImage2: "logo-design-side2.jpg",
+      final: "logo-design-final.jpg",
+    },
+    highlights: [
+      "Versatile logo design across multiple industries",
+      "Brand identity consistency and guidelines",
+      "Digital and print media optimization",
+      "Client requirements analysis and execution",
+    ],
   },
   {
     id: 3,
@@ -31,6 +58,19 @@ export const exhibitionData = [
     image: "collage-web-ui.jpg",
     category: "UI UX",
     tags: ["UI UX"],
+    detailImages: {
+      hero1: "collage-web-ui-hero1.jpg",
+      hero2: "collage-web-ui-hero2.jpg",
+      sideImage1: "collage-web-ui-side1.jpg",
+      sideImage2: "collage-web-ui-side2.jpg",
+      final: "collage-web-ui-final.jpg",
+    },
+    highlights: [
+      "Innovative collage-style layout design",
+      "Seamless scroll interaction patterns",
+      "Visual hierarchy and user experience optimization",
+      "Responsive design implementation",
+    ],
   },
   {
     id: 4,
@@ -42,6 +82,19 @@ export const exhibitionData = [
     image: "carousel-web-ui.jpg",
     category: "UI UX",
     tags: ["UI UX"],
+    detailImages: {
+      hero1: "carousel-web-ui-hero1.jpg",
+      hero2: "carousel-web-ui-hero2.jpg",
+      sideImage1: "carousel-web-ui-side1.jpg",
+      sideImage2: "carousel-web-ui-side2.jpg",
+      final: "carousel-web-ui-final.jpg",
+    },
+    highlights: [
+      "Dynamic carousel interface design",
+      "Smooth animation and transition effects",
+      "Content organization and navigation flow",
+      "Cross-platform compatibility testing",
+    ],
   },
   {
     id: 5,
@@ -53,6 +106,19 @@ export const exhibitionData = [
     image: "teddy-beer-branding.jpg",
     category: "BRANDING",
     tags: ["BRANDING", "ILLUST"],
+    detailImages: {
+      hero1: "teddy-beer-hero1.jpg",
+      hero2: "teddy-beer-hero2.jpg",
+      sideImage1: "teddy-beer-side1.jpg",
+      sideImage2: "teddy-beer-side2.jpg",
+      final: "teddy-beer-final.jpg",
+    },
+    highlights: [
+      "Complete brand identity development",
+      "Character design and illustration",
+      "Environmental design and murals",
+      "Multi-touchpoint brand consistency",
+    ],
   },
   {
     id: 6,
@@ -64,5 +130,18 @@ export const exhibitionData = [
     image: "fb-product-branding.jpg",
     category: "BRANDING",
     tags: ["BRANDING", "GRAPHIC"],
+    detailImages: {
+      hero1: "fb-product-hero1.jpg",
+      hero2: "fb-product-hero2.jpg",
+      sideImage1: "fb-product-side1.jpg",
+      sideImage2: "fb-product-side2.jpg",
+      final: "fb-product-final.jpg",
+    },
+    highlights: [
+      "Food and beverage packaging design",
+      "Brand positioning and market research",
+      "Social media content strategy",
+      "Production-ready design specifications",
+    ],
   },
 ];

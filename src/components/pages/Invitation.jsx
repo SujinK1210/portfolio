@@ -70,6 +70,9 @@ export default function Invitation({
                 <InputGroup>
                   <FormStyledTextarea placeholder="Note" rows="4" />
                 </InputGroup>
+                <InputGroup>
+                  <SubmitButton type="submit">Send Note</SubmitButton>
+                </InputGroup>
               </FormContainer>
             </FormCardContent>
           </FormCard>
@@ -160,6 +163,39 @@ const cardEntrance2 = keyframes`
   }
 `;
 
+const SubmitButton = styled.button`
+  width: 100%;
+  background: transparent;
+  border: 2px solid #f9f8f6;
+  padding: 8px 0;
+  font-family: "museo-sans", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f9f8f6;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  /* margin-top: 1rem; */
+
+  &:hover {
+    background-color: #f9f8f6;
+    color: #111;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(249, 248, 246, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(249, 248, 246, 0.2);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(249, 248, 246, 0.3);
+  }
+`;
+
 const InvitationContainer = styled.div`
   position: fixed;
   top: 0;
@@ -199,7 +235,7 @@ const BaseCard = styled.div`
   position: absolute;
   width: 450px;
   height: fit-content;
-  min-height: 340px;
+  min-height: 440px;
   opacity: 0;
   transform: scale(0.85) rotateX(15deg) translateY(-20px);
   filter: blur(4px);
@@ -251,10 +287,12 @@ const FormCardContent = styled(CardContent)`
 
 const BusinessCardContent = styled(CardContent)`
   color: #111;
-  padding: 0;
+  padding: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 340px;
+  height: 100%;
 `;
 
 const FormContainer = styled.div`
@@ -303,7 +341,7 @@ const FormStyledInput = styled.input`
   padding: 12px 6px;
   font-family: "museo-sans", sans-serif;
   font-size: 16px;
-  color: #f9f8f6;
+  color: #fff;
   outline: none;
   transition: all 0.3s ease;
 
@@ -376,8 +414,8 @@ const DogLink = styled.div`
 
 const LogoDesign = styled.div`
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 280px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -385,13 +423,13 @@ const LogoDesign = styled.div`
 
 const RotatedEllipse = styled.div`
   position: absolute;
-  width: 280px;
-  height: 120px;
-  top: 6rem;
-  left: 6rem;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform: rotate(1deg);
   background-color: #111;
   border-radius: 50%;
-  transform: rotate(1deg);
   z-index: 1;
 `;
 
@@ -405,11 +443,10 @@ const LogoText = styled.div`
   text-transform: uppercase;
   font-size: 24px;
   letter-spacing: 2px;
-  top: 7.6rem;
-  left: 0;
-  transform: rotate(-1deg);
   text-align: center;
   line-height: 1.2;
+  white-space: nowrap;
+  transform: rotate(-1deg);
 `;
 
 const LogoLine = styled.div`
