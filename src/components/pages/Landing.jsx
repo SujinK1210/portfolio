@@ -10,10 +10,22 @@ export default function Landing({
   onNavbarNavigation,
 }) {
   const [isLineAnimating, setIsLineAnimating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const canvasRef = useRef(null);
   const particlesRef = useRef([]);
   const mouseRef = useRef({ x: null, y: null, radius: 100 });
   const animationRef = useRef(null);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Reset animation state when returning to landing page
   useEffect(() => {
@@ -50,49 +62,39 @@ export default function Landing({
   const waitForFont = async () => {
     if ("fonts" in document) {
       try {
-        // Load the specific font and style we're using
         await document.fonts.load('italic 250px "PP Editorial New"');
-        // Wait for all fonts to be ready
         await document.fonts.ready;
         console.log("Font loaded successfully");
       } catch (error) {
         console.warn("Font loading failed:", error);
       }
     }
-    // Small fallback delay if font API not supported
     return new Promise((resolve) => setTimeout(resolve, 100));
   };
 
-  // Initialize canvas and particles with font loading
+  // Initialize canvas and particles with font loading (only for desktop)
   useEffect(() => {
-    if (!active) return;
+    if (!active || isMobile) return;
 
     const initializeCanvas = async () => {
-      // Wait for font to be ready before creating particles
       await waitForFont();
-
-      // Additional frame delay to ensure everything is ready
       await new Promise((resolve) => requestAnimationFrame(resolve));
 
       const canvas = canvasRef.current;
       if (!canvas) return;
 
       const ctx = canvas.getContext("2d");
-
-      // Set larger canvas size with extra padding for particle movement
-      canvas.width = 2000; // Increased to ensure no right-side cropping
-      canvas.height = 600; // Increased height for particle animation space
+      canvas.width = 2000;
+      canvas.height = 600;
 
       const mouse = mouseRef.current;
 
-      // Mouse move handler
       const handleMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect();
         mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
         mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
       };
 
-      // Mouse leave handler to reset mouse position
       const handleMouseLeave = () => {
         mouse.x = null;
         mouse.y = null;
@@ -107,7 +109,6 @@ export default function Landing({
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
 
-      // Debug: Check if font is actually being used
       const testText = ctx.measureText("Perspective");
       const fontLoaded = document.fonts.check(
         'italic 250px "PP Editorial New"'
@@ -119,17 +120,14 @@ export default function Landing({
         fontLoaded
       );
 
-      // Draw the text to create particle data
       ctx.fillText("Perspective", canvas.width / 2, canvas.height / 2);
       const textData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Track interaction state
       let textOpacity = 1;
       let particleOpacity = 0;
       let isTransitioning = false;
 
-      // Particle class based on CodePen
       class Particle {
         constructor(x, y) {
           this.baseX = x;
@@ -150,7 +148,6 @@ export default function Landing({
         }
 
         update() {
-          // Only apply mouse interaction if mouse is present
           if (mouse.x !== null && mouse.y !== null) {
             if (!isTransitioning) {
               isTransitioning = true;
@@ -175,14 +172,12 @@ export default function Landing({
               if (this.alpha < 1) this.alpha += 0.02;
             }
           } else {
-            // Return to base position when mouse is not present
             const dx = this.baseX - this.x;
             const dy = this.baseY - this.y;
             this.x += dx / 2;
             this.y += dy / 2;
             if (this.alpha < 1) this.alpha += 0.02;
 
-            // Check if all particles are back to base to transition back to text
             const isAtBase =
               Math.abs(this.x - this.baseX) < 0.5 &&
               Math.abs(this.y - this.baseY) < 0.5;
@@ -195,7 +190,6 @@ export default function Landing({
         }
       }
 
-      // Initialize particles
       const initParticles = () => {
         particlesRef.current = [];
         for (let y = 0; y < textData.height; y += 1) {
@@ -209,26 +203,21 @@ export default function Landing({
         console.log("Particles created:", particlesRef.current.length);
       };
 
-      // Animation loop
       const animate = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Check if all particles are back at base when mouse is away
         const allAtBase =
           mouse.x === null &&
           mouse.y === null &&
           particlesRef.current.every((p) => p.isAtBase);
 
-        // Handle transition
-        const fadeOutSpeed = 0.5; // Speed when text disappears (mouse enters)
-        const fadeInSpeed = 0.03; // Speed when text reappears (mouse leaves)
+        const fadeOutSpeed = 0.5;
+        const fadeInSpeed = 0.03;
 
         if (isTransitioning && mouse.x !== null && mouse.y !== null) {
-          // Fade out text, fade in particles when mouse is present
           if (textOpacity > 0) textOpacity -= fadeOutSpeed;
           if (particleOpacity < 1) particleOpacity += fadeOutSpeed;
         } else if (allAtBase && particleOpacity > 0) {
-          // Fade back to text when particles return to base
           if (textOpacity < 1) textOpacity += fadeInSpeed;
           if (particleOpacity > 0) particleOpacity -= fadeInSpeed;
           if (textOpacity >= 1 && particleOpacity <= 0) {
@@ -236,7 +225,6 @@ export default function Landing({
           }
         }
 
-        // Draw normal text with fading opacity
         if (textOpacity > 0) {
           ctx.globalAlpha = textOpacity;
           ctx.fillStyle = "#111";
@@ -247,7 +235,6 @@ export default function Landing({
           ctx.globalAlpha = 1;
         }
 
-        // Always update and draw particles (opacity controlled in particle draw)
         particlesRef.current.forEach((particle) => {
           particle.update();
           particle.draw();
@@ -259,7 +246,6 @@ export default function Landing({
       initParticles();
       animate();
 
-      // Cleanup
       return () => {
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseleave", handleMouseLeave);
@@ -269,9 +255,8 @@ export default function Landing({
       };
     };
 
-    // Start the initialization process
     initializeCanvas();
-  }, [active]);
+  }, [active, isMobile]);
 
   return (
     <LandingContainer $active={active} $isTransitioning={isTransitioning}>
@@ -303,8 +288,11 @@ export default function Landing({
           </DesignText>
         </TitleRow>
         <TitleRow>
-          <PerspectiveTextContainer>
-            <ParticleCanvas ref={canvasRef} />
+          <PerspectiveTextContainer $isMobile={isMobile}>
+            {!isMobile && <ParticleCanvas ref={canvasRef} />}
+            {isMobile && (
+              <MobilePerspectiveText>Perspective</MobilePerspectiveText>
+            )}
           </PerspectiveTextContainer>
         </TitleRow>
       </Content>
@@ -312,7 +300,7 @@ export default function Landing({
   );
 }
 
-// Styled components remain the same
+// Updated styled components with media queries
 const PerspectiveTextContainer = styled.div`
   font-family: "PP Editorial New", serif;
   position: relative;
@@ -324,6 +312,50 @@ const PerspectiveTextContainer = styled.div`
   font-style: italic;
   letter-spacing: 0%;
   overflow: visible;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    font-size: 80px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    width: 800px;
+    height: 400px;
+    margin-left: 0;
+    margin-top: -3rem;
+    font-size: 160px;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: 1000px;
+    height: 500px;
+    margin-left: 6rem;
+    margin-top: -4rem;
+    font-size: 200px;
+  }
+
+  @media (min-width: 1025px) and (max-width: 1440px) {
+    width: 1100px;
+    height: 550px;
+    margin-left: 9rem;
+    margin-top: -5rem;
+    font-size: 220px;
+  }
+`;
+
+const MobilePerspectiveText = styled.div`
+  font-family: "PP Editorial New", serif;
+  font-style: italic;
+  font-size: 74px;
+  color: #111;
+  line-height: 40px;
+  text-align: center;
 `;
 
 const ParticleCanvas = styled.canvas`
@@ -334,6 +366,22 @@ const ParticleCanvas = styled.canvas`
   height: 600px;
   background: transparent;
   pointer-events: auto;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    left: -200px;
+    width: 1000px;
+    height: 400px;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    left: -400px;
+    width: 1500px;
+    height: 500px;
+  }
 `;
 
 const LandingContainer = styled.div`
@@ -361,6 +409,15 @@ const LandingContainer = styled.div`
   max-width: 100vw;
   max-height: 100vh;
   z-index: ${(props) => (props.$active ? 10 : 5)};
+
+  @media (max-width: 480px) {
+    padding: 0 16px;
+    overflow-y: auto;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    padding: 0 32px;
+  }
 `;
 
 const Content = styled.div`
@@ -374,12 +431,44 @@ const Content = styled.div`
   align-items: flex-start;
   overflow: hidden;
   box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 0;
+    margin-top: 15vh;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    width: 100%;
+    padding: 0 24px;
+    margin-top: 20vh;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    width: calc(100vw - 80px);
+    padding: 0 40px;
+    margin-top: 25vh;
+  }
+
+  @media (min-width: 1025px) and (max-width: 1440px) {
+    width: calc(100vw - 120px);
+    padding: 0 48px;
+  }
 `;
 
 const DivCol = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
+
+  @media (max-width: 480px) {
+    order: 3;
+    margin-top: -12px;
+    width: 88vw;
+    text-align: right;
+  }
 `;
 
 const HeaderRow = styled.div`
@@ -387,6 +476,13 @@ const HeaderRow = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
 `;
 
 const TitleRow = styled.div`
@@ -394,6 +490,16 @@ const TitleRow = styled.div`
   align-items: center;
   width: 100%;
   padding-bottom: 46px;
+
+  @media (max-width: 480px) {
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 20px;
+
+    &:last-child {
+      padding-bottom: 40px;
+    }
+  }
 `;
 
 const Header = styled.h1`
@@ -406,6 +512,30 @@ const Header = styled.h1`
   letter-spacing: 0%;
   margin-left: 8px;
   margin-bottom: 8px;
+
+  @media (max-width: 480px) {
+    font-size: 28px;
+    line-height: 36px;
+    margin: 0;
+    text-align: left;
+    order: 1;
+    width: 88vw;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    font-size: 36px;
+    line-height: 48px;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 42px;
+    line-height: 64px;
+  }
+
+  @media (min-width: 1025px) and (max-width: 1440px) {
+    font-size: 48px;
+    line-height: 72px;
+  }
 `;
 
 const AuthorSection = styled.div`
@@ -414,6 +544,11 @@ const AuthorSection = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+
+  @media (max-width: 480px) {
+    order: 2;
+    margin-bottom: 0;
+  }
 `;
 
 const Author = styled.p`
@@ -424,6 +559,17 @@ const Author = styled.p`
   font-weight: 200;
   color: #787878;
   letter-spacing: 2%;
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    line-height: 24px;
+    margin-bottom: 4px;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    font-size: 18px;
+    line-height: 28px;
+  }
 `;
 
 const Line = styled.div`
@@ -431,6 +577,11 @@ const Line = styled.div`
   width: ${(props) => (props.$isAnimating ? "0%" : "68%")};
   margin-bottom: 3rem;
   transition: width 0.8s ease-in-out;
+
+  @media (max-width: 480px) {
+    width: ${(props) => (props.$isAnimating ? "0%" : "100%")};
+    margin-bottom: 0;
+  }
 `;
 
 const ClickHint = styled.p`
@@ -442,6 +593,10 @@ const ClickHint = styled.p`
   margin: 0;
   letter-spacing: 2px;
   min-width: fit-content;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
 `;
 
 const ScrollHint = styled.p`
@@ -453,6 +608,12 @@ const ScrollHint = styled.p`
   margin: 0;
   letter-spacing: -2%;
   width: 242px;
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+    width: auto;
+    margin: 0;
+  }
 `;
 
 const DesignText = styled.div`
@@ -462,6 +623,29 @@ const DesignText = styled.div`
   letter-spacing: 0%;
   margin-bottom: -2.5rem;
   line-height: 200px;
+
+  @media (max-width: 480px) {
+    font-size: 74px;
+    line-height: 80px;
+    margin-bottom: -1rem;
+    text-align: left;
+    width: 100%;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    font-size: 120px;
+    line-height: 120px;
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    font-size: 150px;
+    line-height: 150px;
+  }
+
+  @media (min-width: 1025px) and (max-width: 1440px) {
+    font-size: 180px;
+    line-height: 180px;
+  }
 `;
 
 const Span = styled.span`
@@ -469,4 +653,12 @@ const Span = styled.span`
   font-weight: 400;
   font-style: italic;
   font-size: 5rem;
+
+  @media (max-width: 480px) {
+    font-size: 32px;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    font-size: 40px;
+  }
 `;

@@ -4,14 +4,15 @@ export default function SplitImageContainer({
   topImage,
   bottomImage,
   hoverContent,
+  activeFilter = "ALL",
 }) {
   return (
     <Container>
       <SplitImageWrapper>
-        <ImageHalf className="top-half">
+        <ImageHalf className="top-half" $activeFilter={activeFilter}>
           <img src={topImage.src} alt={topImage.alt} />
         </ImageHalf>
-        <ImageHalf className="bottom-half">
+        <ImageHalf className="bottom-half" $activeFilter={activeFilter}>
           <img src={bottomImage.src} alt={bottomImage.alt} />
         </ImageHalf>
         <HoverText className="hover-text">
@@ -36,6 +37,16 @@ const Container = styled.div`
   height: 480px;
   max-width: 1140px;
   cursor: pointer;
+
+  @media (max-width: 1199px) {
+    top: 200px;
+    height: 400px;
+    max-width: 900px;
+  }
+
+  @media (max-width: 991px) {
+    display: none; /* Hide split animation on tablet and below */
+  }
 `;
 
 const SplitImageWrapper = styled.div`
@@ -47,10 +58,18 @@ const SplitImageWrapper = styled.div`
 
   &:hover .top-half {
     transform: translateY(-110px);
+
+    @media (max-width: 1199px) {
+      transform: translateY(-90px);
+    }
   }
 
   &:hover .bottom-half {
     transform: translateY(110px);
+
+    @media (max-width: 1199px) {
+      transform: translateY(90px);
+    }
   }
 
   &:hover .hover-text {
@@ -68,13 +87,65 @@ const ImageHalf = styled.div`
   z-index: 120;
 
   &.top-half {
-    bottom: 142px;
+    bottom: ${(props) => {
+      const baseSpacing = 142;
+      let extraSpacing = 0;
+
+      if (props.$activeFilter === "UI UX") {
+        extraSpacing = 17.2; // 1.2rem - 2px
+      } else if (props.$activeFilter !== "ALL") {
+        extraSpacing = 19.2; // 1.2rem = 19.2px
+      }
+
+      return `${baseSpacing + extraSpacing}px`;
+    }};
     left: 0;
+
+    @media (max-width: 1199px) {
+      bottom: ${(props) => {
+        const baseSpacing = 118;
+        let extraSpacing = 0;
+
+        if (props.$activeFilter === "UI UX") {
+          extraSpacing = 14.4;
+        } else if (props.$activeFilter !== "ALL") {
+          extraSpacing = 16;
+        }
+
+        return `${baseSpacing + extraSpacing}px`;
+      }};
+    }
   }
 
   &.bottom-half {
-    top: 140.1px;
+    top: ${(props) => {
+      const baseSpacing = 140.1;
+      let extraSpacing = 0;
+
+      if (props.$activeFilter === "UI UX") {
+        extraSpacing = 17.2; // 1.2rem - 2px
+      } else if (props.$activeFilter !== "ALL") {
+        extraSpacing = 19.2; // 1.2rem = 19.2px
+      }
+
+      return `${baseSpacing + extraSpacing}px`;
+    }};
     left: 0;
+
+    @media (max-width: 1199px) {
+      top: ${(props) => {
+        const baseSpacing = 116.1;
+        let extraSpacing = 0;
+
+        if (props.$activeFilter === "UI UX") {
+          extraSpacing = 14.4;
+        } else if (props.$activeFilter !== "ALL") {
+          extraSpacing = 16;
+        }
+
+        return `${baseSpacing + extraSpacing}px`;
+      }};
+    }
   }
 
   img {
@@ -82,6 +153,14 @@ const ImageHalf = styled.div`
     height: 100%;
     object-fit: cover;
     object-position: center;
+
+    /* Optimize image rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+
+    /* Prevent dragging */
+    -webkit-user-drag: none;
+    user-drag: none;
   }
 `;
 
@@ -102,6 +181,12 @@ const HoverText = styled.div`
   backdrop-filter: blur(10px);
   max-width: 1400px;
   width: 1080px;
+
+  @media (max-width: 1199px) {
+    top: 94px;
+    width: 720px;
+    padding: 2rem;
+  }
 `;
 
 const Definition = styled.div`
@@ -118,6 +203,10 @@ const Pronunciation = styled.h2`
   margin: 0;
   line-height: 1;
   letter-spacing: -0.2%;
+
+  @media (max-width: 1199px) {
+    font-size: 36px;
+  }
 `;
 
 const PhoneticGuide = styled.p`
@@ -129,6 +218,10 @@ const PhoneticGuide = styled.p`
   opacity: 0.8;
   line-height: 1;
   letter-spacing: -0.2%;
+
+  @media (max-width: 1199px) {
+    font-size: 22px;
+  }
 `;
 
 const Description = styled.p`
@@ -139,6 +232,10 @@ const Description = styled.p`
   margin: 0 0 1rem 0;
   line-height: 1;
   letter-spacing: -0.2%;
+
+  @media (max-width: 1199px) {
+    font-size: 18px;
+  }
 `;
 
 const Example = styled.p`
@@ -150,4 +247,8 @@ const Example = styled.p`
   margin: 0;
   opacity: 0.9;
   line-height: 1;
+
+  @media (max-width: 1199px) {
+    font-size: 16px;
+  }
 `;

@@ -1,7 +1,18 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styled from "styled-components";
-import all01Image from "../../assets/all_01.png";
-import all02Image from "../../assets/all_02.png";
+
+// Import all category images
+import all01Image from "../../assets/portfolio_category/all_01.png";
+import all02Image from "../../assets/portfolio_category/all_02.png";
+import branding01Image from "../../assets/portfolio_category/branding_01.png";
+import branding02Image from "../../assets/portfolio_category/branding_02.png";
+import graphic01Image from "../../assets/portfolio_category/graphic_01.png";
+import graphic02Image from "../../assets/portfolio_category/graphic_02.png";
+import illust01Image from "../../assets/portfolio_category/illust_01.png";
+import illust02Image from "../../assets/portfolio_category/illust_02.png";
+import uiux01Image from "../../assets/portfolio_category/uiux_01.png";
+import uiux02Image from "../../assets/portfolio_category/uiux_02.png";
+
 import FilterContainer from "../exhibition/FilterContainer";
 import ProjectDetail from "../exhibition/ProjectDetail";
 import SplitImageContainer from "../exhibition/SplitImageContainer";
@@ -30,16 +41,46 @@ export default function Exhibition({
     setSelectedProject(null);
   };
 
-  const imageData = {
-    topImage: {
-      src: all01Image,
-      alt: "Project preview bottom",
+  // Create a mapping of filter names to their corresponding images
+  const categoryImages = {
+    ALL: {
+      topImage: { src: all01Image, alt: "All projects preview top" },
+      bottomImage: { src: all02Image, alt: "All projects preview bottom" },
     },
-    bottomImage: {
-      src: all02Image,
-      alt: "Project preview top",
+    BRANDING: {
+      topImage: { src: branding01Image, alt: "Branding projects preview top" },
+      bottomImage: {
+        src: branding02Image,
+        alt: "Branding projects preview bottom",
+      },
+    },
+    "UI UX": {
+      topImage: { src: uiux01Image, alt: "UI UX projects preview top" },
+      bottomImage: { src: uiux02Image, alt: "UI UX projects preview bottom" },
+    },
+    GRAPHIC: {
+      topImage: { src: graphic01Image, alt: "Graphic projects preview top" },
+      bottomImage: {
+        src: graphic02Image,
+        alt: "Graphic projects preview bottom",
+      },
+    },
+    ILLUST: {
+      topImage: {
+        src: illust01Image,
+        alt: "Illustration projects preview top",
+      },
+      bottomImage: {
+        src: illust02Image,
+        alt: "Illustration projects preview bottom",
+      },
     },
   };
+
+  // Get the current images based on active filter
+  const currentImages = useMemo(() => {
+    return categoryImages[activeFilter] || categoryImages["ALL"];
+  }, [activeFilter]);
 
   const hoverContent = {
     title: "palbangmiin",
@@ -81,9 +122,10 @@ export default function Exhibition({
         />
 
         <SplitImageContainer
-          topImage={imageData.topImage}
-          bottomImage={imageData.bottomImage}
+          topImage={currentImages.topImage}
+          bottomImage={currentImages.bottomImage}
           hoverContent={hoverContent}
+          activeFilter={activeFilter}
         />
 
         <WorkGrid
@@ -123,4 +165,8 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 525px) {
+    min-height: 70px;
+    padding: 5.2rem 0.2rem 0.2rem 0.2rem;
+  }
 `;

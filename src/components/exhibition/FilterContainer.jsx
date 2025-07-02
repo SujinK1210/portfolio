@@ -27,6 +27,15 @@ const Container = styled.div`
   margin-bottom: 4rem;
   justify-content: center;
   align-items: center;
+  @media (max-width: 800px) {
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 524px) {
+    gap: 0.8rem;
+  }
 `;
 
 const FilterButton = styled.button`
@@ -48,5 +57,19 @@ const FilterButton = styled.button`
     background-color: ${(props) =>
       props.active ? "#f9f8f6" : "rgba(249, 248, 246, 0.1)"};
     border-color: #f9f8f6;
+  }
+
+  @media (max-width: 800px) {
+    padding: 3px 10px;
+    font-size: 16px;
+    letter-spacing: -1px;
+    min-width: 60px;
+  }
+
+  @media (max-width: 525px) {
+    padding: 3px 6px;
+    font-size: 13px;
+    letter-spacing: -1px;
+    min-width: 40px;
   }
 `;

@@ -132,6 +132,10 @@ const NavbarContainer = styled.nav`
   background-color: ${(props) => (props.isLandingPage ? "#f9f8f6" : "#111")};
   z-index: 20;
   transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  @media (max-width: 525px) {
+    padding: 0.5rem 0rem;
+    height: 70px;
+  }
 `;
 
 const StyledNavItem = styled.div`
@@ -156,6 +160,10 @@ const StyledNavItem = styled.div`
   justify-content: center;
   align-items: center;
   perspective: 200px;
+  @media (max-width: 525px) {
+    margin: 32px 18px;
+    font-size: 18px;
+  }
 `;
 
 const Letter = styled.span`
