@@ -38,24 +38,33 @@ const Card = styled.div`
   overflow: hidden;
   transition: transform 0.3s ease;
   cursor: pointer;
-  width: 652px;
+  width: 100%;
+  max-width: 652px;
   height: 100%;
 
   &:hover {
     transform: translateY(-5px);
   }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 const ImageContainer = styled.div`
   position: relative;
-  width: 652px;
-  height: 455px;
+  width: 100%;
+  height: 0;
+  padding-bottom: 69.79%; /* Aspect ratio 652:455 = 69.79% */
   overflow: hidden;
   margin-bottom: 13px;
 
   img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 455px;
+    height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
   }
@@ -79,7 +88,7 @@ const ImageContainer = styled.div`
     top: 0;
     left: 0;
     width: 100%;
-    height: 455px;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -94,13 +103,21 @@ const SeeMoreText = styled.div`
   transform: translate(-50%, -50%);
   color: #f9f8f6;
   font-family: "museo-sans", sans-serif;
-  font-size: 18px;
+  font-size: 1.25vw; /* ~18px at 1440px width */
   font-weight: 600;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: 2;
   text-align: center;
+
+  @media (max-width: 980px) {
+    font-size: 16px; /* Fixed size for smaller screens */
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -114,7 +131,7 @@ const Title = styled.div`
   display: flex;
   align-items: center;
   font-family: "museo-sans", sans-serif;
-  font-size: 24px;
+  font-size: 1.67vw; /* ~24px at 1440px width */
   font-weight: 600;
   width: 100%;
   font-style: italic;
@@ -122,15 +139,43 @@ const Title = styled.div`
   margin: 0;
   line-height: 1.2;
   letter-spacing: -2.5%;
+
+  @media (max-width: 980px) {
+    font-size: 20px; /* Fixed size for smaller screens */
+  }
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  @media (max-width: 525px) {
+    font-size: 16px;
+  }
 `;
 
 const Date = styled.p`
   font-family: "museo-sans", sans-serif;
-  font-size: 22px;
+  font-size: 1.53vw; /* ~22px at 1440px width */
   font-weight: 100;
   color: #f9f8f6;
   margin-left: 1rem;
   letter-spacing: -2.5%;
+
+  @media (max-width: 980px) {
+    font-size: 18px; /* Fixed size for smaller screens */
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-left: 0;
+  }
+
+  @media (max-width: 525px) {
+    font-size: 14px;
+  }
 `;
 
 const ToolsContainer = styled.div`
@@ -142,18 +187,42 @@ const ToolsContainer = styled.div`
 
 const Tool = styled.span`
   font-family: "museo-sans", sans-serif;
-  font-size: 18px;
+  font-size: 1.25vw; /* ~18px at 1440px width */
   font-weight: 200;
   color: #f9f8f6;
   letter-spacing: -2.5%;
+
+  @media (max-width: 980px) {
+    font-size: 16px; /* Fixed size for smaller screens */
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 525px) {
+    font-size: 12px;
+  }
 `;
 
 const Description = styled.p`
   font-family: "museo-sans", sans-serif;
-  font-size: 16px;
+  font-size: 1.11vw; /* ~16px at 1440px width */
   font-weight: 300;
   color: #ccc;
   margin: 0;
   line-height: 1.5;
   letter-spacing: -2.5%;
+
+  @media (max-width: 980px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 525px) {
+    font-size: 12px;
+  }
 `;

@@ -41,11 +41,7 @@ const Container = styled.div`
   @media (max-width: 1199px) {
     top: 200px;
     height: 400px;
-    max-width: 900px;
-  }
-
-  @media (max-width: 991px) {
-    display: none; /* Hide split animation on tablet and below */
+    max-width: 100%;
   }
 `;
 
@@ -58,10 +54,6 @@ const SplitImageWrapper = styled.div`
 
   &:hover .top-half {
     transform: translateY(-110px);
-
-    @media (max-width: 1199px) {
-      transform: translateY(-90px);
-    }
   }
 
   &:hover .bottom-half {
@@ -88,13 +80,13 @@ const ImageHalf = styled.div`
 
   &.top-half {
     bottom: ${(props) => {
-      const baseSpacing = 142;
+      const baseSpacing = 139;
       let extraSpacing = 0;
 
       if (props.$activeFilter === "UI UX") {
-        extraSpacing = 17.2; // 1.2rem - 2px
+        extraSpacing = 12.2; // 1.2rem - 2px
       } else if (props.$activeFilter !== "ALL") {
-        extraSpacing = 19.2; // 1.2rem = 19.2px
+        extraSpacing = 15; // 1.2rem = 19.2px
       }
 
       return `${baseSpacing + extraSpacing}px`;
@@ -150,7 +142,7 @@ const ImageHalf = styled.div`
 
   img {
     width: 100%;
-    height: 100%;
+    height: 90%;
     object-fit: cover;
     object-position: center;
 
@@ -166,7 +158,7 @@ const ImageHalf = styled.div`
 
 const HoverText = styled.div`
   position: absolute;
-  top: 114px;
+  top: 94px;
   left: 50%;
   transform: translateX(-50%);
   color: #f9f8f6;
@@ -179,8 +171,8 @@ const HoverText = styled.div`
   padding: 2.5rem;
   border-radius: 8px;
   backdrop-filter: blur(10px);
-  max-width: 1400px;
-  width: 1080px;
+  max-width: 1200px;
+  width: 980px;
 
   @media (max-width: 1199px) {
     top: 94px;

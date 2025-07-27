@@ -27,6 +27,11 @@ const Container = styled.div`
   margin-bottom: 4rem;
   justify-content: center;
   align-items: center;
+
+  @media (max-width: 1200px) {
+    margin-top: 0.4rem;
+  }
+
   @media (max-width: 800px) {
     gap: 1.2rem;
     flex-wrap: wrap;

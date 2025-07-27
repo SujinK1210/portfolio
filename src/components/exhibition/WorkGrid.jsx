@@ -37,10 +37,14 @@ const Grid = styled.div`
   margin-top: 520px;
   padding: 0 2rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1200px) {
     grid-template-columns: 1fr;
     gap: 3rem;
-    margin-top: 400px;
+    margin-top: 31.67vw; /* ~380px at 1200px width */
+    justify-items: center;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
   }
 `;
 
