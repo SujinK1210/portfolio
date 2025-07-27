@@ -131,7 +131,7 @@ const Title = styled.div`
   display: flex;
   align-items: center;
   font-family: "museo-sans", sans-serif;
-  font-size: 1.67vw; /* ~24px at 1440px width */
+  font-size: 26px;
   font-weight: 600;
   width: 100%;
   font-style: italic;
@@ -158,7 +158,7 @@ const Title = styled.div`
 
 const Date = styled.p`
   font-family: "museo-sans", sans-serif;
-  font-size: 1.53vw; /* ~22px at 1440px width */
+  font-size: 26px;
   font-weight: 100;
   color: #f9f8f6;
   margin-left: 1rem;
@@ -187,10 +187,10 @@ const ToolsContainer = styled.div`
 
 const Tool = styled.span`
   font-family: "museo-sans", sans-serif;
-  font-size: 1.25vw; /* ~18px at 1440px width */
+  font-size: 20px;
   font-weight: 200;
-  color: #f9f8f6;
-  letter-spacing: -2.5%;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: -0%;
 
   @media (max-width: 980px) {
     font-size: 16px; /* Fixed size for smaller screens */
@@ -207,7 +207,7 @@ const Tool = styled.span`
 
 const Description = styled.p`
   font-family: "museo-sans", sans-serif;
-  font-size: 1.11vw; /* ~16px at 1440px width */
+  font-size: 20px;
   font-weight: 300;
   color: #ccc;
   margin: 0;

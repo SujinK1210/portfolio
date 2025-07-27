@@ -91,8 +91,19 @@ export default function Landing({
 
       const handleMouseMove = (e) => {
         const rect = canvas.getBoundingClientRect();
+        const prevX = mouse.x;
+        const prevY = mouse.y;
+
         mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
         mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        // Dynamic radius based on mouse speed
+        if (prevX !== null && prevY !== null) {
+          const speed = Math.sqrt(
+            Math.pow(mouse.x - prevX, 2) + Math.pow(mouse.y - prevY, 2)
+          );
+          mouse.radius = Math.min(150, Math.max(80, 80 + speed * 2));
+        }
       };
 
       const handleMouseLeave = () => {
@@ -134,66 +145,101 @@ export default function Landing({
           this.baseY = y;
           this.x = x;
           this.y = y;
-          this.size = Math.random() * 0.6 + 1.4;
+          this.vx = 0; // Add velocity
+          this.vy = 0;
+          this.size = Math.random() * 0.8 + 1.6; // Slightly larger particles
           this.alpha = 1;
-          this.density = Math.random() * 30 + 1;
+          this.density = Math.random() * 40 + 10;
           this.isAtBase = true;
+          this.friction = 0.95; // Add friction for smoother deceleration
+          this.springBack = 0.02; // Spring constant for return animation
+          this.floatPhase = Math.random() * Math.PI * 2;
+          this.floatSpeed = 0.01 + Math.random() * 0.02;
+          this.floatAmount = 0.3;
         }
 
         draw() {
+          // Subtle glow for moving particles
+          if (!this.isAtBase) {
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = `rgba(1, 1, 1, ${
+              this.alpha * particleOpacity * 0.3
+            })`;
+          }
+
           ctx.fillStyle = `rgba(1, 1, 1, ${this.alpha * particleOpacity})`;
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
           ctx.fill();
+
+          ctx.shadowBlur = 0;
         }
 
         update() {
           if (mouse.x !== null && mouse.y !== null) {
-            if (!isTransitioning) {
-              isTransitioning = true;
-            }
-
             const dx = mouse.x - this.x;
             const dy = mouse.y - this.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < mouse.radius) {
-              const forceX = (dx / distance) * this.density;
-              const forceY = (dy / distance) * this.density;
-              this.x -= forceX * 1.6;
-              this.y -= forceY * 1.6;
-              this.alpha -= 0.2;
-              if (this.alpha < 1) this.alpha += 0.1;
-            } else {
-              const dx = this.baseX - this.x;
-              const dy = this.baseY - this.y;
-              this.x += dx / 10;
-              this.y += dy / 10;
-              if (this.alpha < 1) this.alpha += 0.02;
-            }
-          } else {
-            const dx = this.baseX - this.x;
-            const dy = this.baseY - this.y;
-            this.x += dx / 2;
-            this.y += dy / 2;
-            if (this.alpha < 1) this.alpha += 0.02;
+              // Improved repulsion with inverse square law
+              const force = (mouse.radius - distance) / mouse.radius;
+              const forceX = (dx / distance) * force * this.density * 0.5;
+              const forceY = (dy / distance) * force * this.density * 0.5;
 
-            const isAtBase =
-              Math.abs(this.x - this.baseX) < 0.5 &&
-              Math.abs(this.y - this.baseY) < 0.5;
-            if (isAtBase && particleOpacity > 0) {
-              this.isAtBase = true;
-            } else {
-              this.isAtBase = false;
+              this.vx -= forceX;
+              this.vy -= forceY;
+
+              // Fade based on distance from mouse
+              this.alpha = Math.max(0.3, 1 - force * 0.5);
             }
+          }
+
+          // Spring back to base position
+          const dx = this.baseX - this.x;
+          const dy = this.baseY - this.y;
+
+          this.vx += dx * this.springBack;
+          this.vy += dy * this.springBack;
+
+          // Apply friction
+          this.vx *= this.friction;
+          this.vy *= this.friction;
+
+          // Update position
+          this.x += this.vx;
+          this.y += this.vy;
+
+          // Check if at base
+          this.isAtBase =
+            Math.abs(dx) < 0.5 &&
+            Math.abs(dy) < 0.5 &&
+            Math.abs(this.vx) < 0.1 &&
+            Math.abs(this.vy) < 0.1;
+
+          // Subtle idle animation when at base
+          if (this.isAtBase && mouse.x === null) {
+            this.x =
+              this.baseX +
+              Math.sin(Date.now() * this.floatSpeed + this.floatPhase) *
+                this.floatAmount;
+            this.y =
+              this.baseY +
+              Math.cos(Date.now() * this.floatSpeed * 0.7 + this.floatPhase) *
+                this.floatAmount;
+          }
+
+          // Restore alpha when returning
+          if (this.alpha < 1) {
+            this.alpha = Math.min(1, this.alpha + 0.05);
           }
         }
       }
 
       const initParticles = () => {
         particlesRef.current = [];
-        for (let y = 0; y < textData.height; y += 1) {
-          for (let x = 0; x < textData.width; x += 1) {
+        for (let y = 0; y < textData.height; y += 2) {
+          for (let x = 0; x < textData.width; x += 2) {
             const index = (y * textData.width + x) * 4;
             if (textData.data[index + 3] > 50) {
               particlesRef.current.push(new Particle(x, y));
@@ -211,16 +257,26 @@ export default function Landing({
           mouse.y === null &&
           particlesRef.current.every((p) => p.isAtBase);
 
-        const fadeOutSpeed = 0.5;
-        const fadeInSpeed = 0.03;
+        const fadeOutSpeed = 0.15; // Slower for smoother transition
+        const fadeInSpeed = 0.12;
 
         if (isTransitioning && mouse.x !== null && mouse.y !== null) {
-          if (textOpacity > 0) textOpacity -= fadeOutSpeed;
-          if (particleOpacity < 1) particleOpacity += fadeOutSpeed;
+          if (textOpacity > 0) {
+            textOpacity = Math.max(0, textOpacity - fadeOutSpeed);
+          }
+          if (particleOpacity < 1) {
+            particleOpacity = Math.min(1, particleOpacity + fadeOutSpeed);
+          }
         } else if (allAtBase && particleOpacity > 0) {
-          if (textOpacity < 1) textOpacity += fadeInSpeed;
-          if (particleOpacity > 0) particleOpacity -= fadeInSpeed;
-          if (textOpacity >= 1 && particleOpacity <= 0) {
+          if (textOpacity < 1) {
+            textOpacity = Math.min(1, textOpacity + fadeInSpeed);
+          }
+          if (particleOpacity > 0) {
+            particleOpacity = Math.max(0, particleOpacity - fadeInSpeed);
+          }
+          if (textOpacity >= 0.99 && particleOpacity <= 0.01) {
+            textOpacity = 1;
+            particleOpacity = 0;
             isTransitioning = false;
           }
         }
