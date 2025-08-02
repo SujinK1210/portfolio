@@ -10,7 +10,7 @@ export default function FilterContainer({
       {filters.map((filter) => (
         <FilterButton
           key={filter}
-          active={activeFilter === filter}
+          $active={activeFilter === filter}
           onClick={() => onFilterChange(filter)}
         >
           {filter}

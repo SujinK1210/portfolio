@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Navbar from "../navigation/Navbar";
+import { getImage } from "../../utils/imageMapping"; // ADDED: Import the image helper
 
 export default function ProjectDetail({ project, onBack, onNavbarNavigation }) {
   const [visibleSections, setVisibleSections] = useState(new Set());
@@ -64,11 +65,13 @@ export default function ProjectDetail({ project, onBack, onNavbarNavigation }) {
           className={visibleSections.has("hero1") ? "animate-bounce-up" : ""}
         >
           <img
-            src={`src/assets/exhibition/${
-              project.detailImages?.hero1 || project.image
-            }`}
+            src={getImage(project.detailImages?.hero1 || project.image)} // CHANGED: Use getImage helper
             alt={`${project.title} - Hero 1`}
             onError={(e) => {
+              console.log(
+                "Failed to load hero1 image:",
+                project.detailImages?.hero1 || project.image
+              ); // ADDED: Debug logging
               e.target.src = placeholderImage;
             }}
           />
@@ -80,11 +83,13 @@ export default function ProjectDetail({ project, onBack, onNavbarNavigation }) {
           className={visibleSections.has("hero2") ? "animate-drop-down" : ""}
         >
           <img
-            src={`src/assets/exhibition/${
-              project.detailImages?.hero2 || project.image
-            }`}
+            src={getImage(project.detailImages?.hero2 || project.image)} // CHANGED: Use getImage helper
             alt={`${project.title} - Hero 2`}
             onError={(e) => {
+              console.log(
+                "Failed to load hero2 image:",
+                project.detailImages?.hero2 || project.image
+              ); // ADDED: Debug logging
               e.target.src = placeholderImage;
             }}
           />
@@ -138,22 +143,26 @@ export default function ProjectDetail({ project, onBack, onNavbarNavigation }) {
         >
           <SideImage className="slide-left">
             <img
-              src={`src/assets/exhibition/${
-                project.detailImages?.sideImage1 || project.image
-              }`}
+              src={getImage(project.detailImages?.sideImage1 || project.image)} // CHANGED: Use getImage helper
               alt={`${project.title} - Side 1`}
               onError={(e) => {
+                console.log(
+                  "Failed to load sideImage1:",
+                  project.detailImages?.sideImage1 || project.image
+                ); // ADDED: Debug logging
                 e.target.src = placeholderImage;
               }}
             />
           </SideImage>
           <SideImage className="slide-right">
             <img
-              src={`src/assets/exhibition/${
-                project.detailImages?.sideImage2 || project.image
-              }`}
+              src={getImage(project.detailImages?.sideImage2 || project.image)} // CHANGED: Use getImage helper
               alt={`${project.title} - Side 2`}
               onError={(e) => {
+                console.log(
+                  "Failed to load sideImage2:",
+                  project.detailImages?.sideImage2 || project.image
+                ); // ADDED: Debug logging
                 e.target.src = placeholderImage;
               }}
             />
@@ -166,11 +175,13 @@ export default function ProjectDetail({ project, onBack, onNavbarNavigation }) {
           className={visibleSections.has("final") ? "animate-scale-rotate" : ""}
         >
           <img
-            src={`src/assets/exhibition/${
-              project.detailImages?.final || project.image
-            }`}
+            src={getImage(project.detailImages?.final || project.image)} // CHANGED: Use getImage helper
             alt={`${project.title} - Final`}
             onError={(e) => {
+              console.log(
+                "Failed to load final image:",
+                project.detailImages?.final || project.image
+              ); // ADDED: Debug logging
               e.target.src = placeholderImage;
             }}
           />

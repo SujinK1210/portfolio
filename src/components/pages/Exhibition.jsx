@@ -103,7 +103,9 @@ export default function Exhibition({
 
   // Otherwise, show the main exhibition page
   return (
-    <ExhibitionContainer active={active} isTransitioning={isTransitioning}>
+    <ExhibitionContainer $active={active} $isTransitioning={isTransitioning}>
+      {" "}
+      {/* FIXED: Added $ prefix */}
       <Navbar
         activeItem="exhibition"
         onItemClick={(item) => {
@@ -113,7 +115,6 @@ export default function Exhibition({
         }}
         isLandingPage={false}
       />
-
       <Content>
         <FilterContainer
           filters={filters}
@@ -146,14 +147,18 @@ const ExhibitionContainer = styled.div`
   height: 100vh;
   background-color: #111;
   color: #f9f8f6;
-  opacity: ${(props) => (props.active ? 1 : 0)};
-  visibility: ${(props) => (props.active ? "visible" : "hidden")};
+  opacity: ${(props) =>
+    props.$active ? 1 : 0}; /* FIXED: Changed to $active */
+  visibility: ${(props) =>
+    props.$active ? "visible" : "hidden"}; /* FIXED: Changed to $active */
   transition: opacity 0.8s ease, visibility 0.8s ease;
-  pointer-events: ${(props) => (props.active ? "auto" : "none")};
+  pointer-events: ${(props) =>
+    props.$active ? "auto" : "none"}; /* FIXED: Changed to $active */
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-  z-index: ${(props) => (props.active ? 10 : 5)};
+  z-index: ${(props) =>
+    props.$active ? 10 : 5}; /* FIXED: Changed to $active */
 `;
 
 const Content = styled.div`

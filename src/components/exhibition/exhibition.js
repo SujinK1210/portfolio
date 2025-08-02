@@ -6,16 +6,15 @@ export const exhibitionData = [
     tools: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Adobe InDesign"],
     description:
       'Led branding, packaging, and web design for "All in One SkinGlow" - a new beauty supplement by Korean wellness brand "MyIntent"',
-    image: "beauty-supplement.jpg",
+    image: "b-mypotent.jpg",
     category: "BRANDING",
     tags: ["BRANDING"],
-    // New detailed content for project detail layout
     detailImages: {
-      hero1: "beauty-supplement-hero1.jpg",
-      hero2: "beauty-supplement-hero2.jpg",
-      sideImage1: "beauty-supplement-side1.jpg",
-      sideImage2: "beauty-supplement-side2.jpg",
-      final: "beauty-supplement-final.jpg",
+      hero1: "b-mypotent.jpg",
+      hero2: "b-mypotent.jpg",
+      sideImage1: "b-mypotent.jpg",
+      sideImage2: "b-mypotent.jpg",
+      final: "b-mypotent.jpg",
     },
     highlights: [
       "Creative concept development and execution",
@@ -31,15 +30,15 @@ export const exhibitionData = [
     tools: ["Adobe Photoshop", "Adobe Illustrator"],
     description:
       "Logo design for take out put place, online website, construction/remodel company site",
-    image: "logo-design.jpg",
+    image: "g-grab.jpg", // UPDATED: Real image file
     category: "BRANDING",
     tags: ["BRANDING", "GRAPHIC"],
     detailImages: {
-      hero1: "logo-design-hero1.jpg",
-      hero2: "logo-design-hero2.jpg",
-      sideImage1: "logo-design-side1.jpg",
-      sideImage2: "logo-design-side2.jpg",
-      final: "logo-design-final.jpg",
+      hero1: "g-grab.jpg",
+      hero2: "g-star.jpg",
+      sideImage1: "g-grab.jpg",
+      sideImage2: "g-star.jpg",
+      final: "g-grab.jpg",
     },
     highlights: [
       "Versatile logo design across multiple industries",
@@ -55,15 +54,15 @@ export const exhibitionData = [
     tools: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Adobe InDesign"],
     description:
       'Led branding, packaging, and web design for "All in One SkinGlow" - a new beauty supplement by Korean wellness brand "MyIntent"',
-    image: "collage-web-ui.jpg",
+    image: "ux-adsologist-island.jpg", // UPDATED: Real image file
     category: "UI UX",
     tags: ["UI UX"],
     detailImages: {
-      hero1: "collage-web-ui-hero1.jpg",
-      hero2: "collage-web-ui-hero2.jpg",
-      sideImage1: "collage-web-ui-side1.jpg",
-      sideImage2: "collage-web-ui-side2.jpg",
-      final: "collage-web-ui-final.jpg",
+      hero1: "ux-adsologist-island.jpg",
+      hero2: "u-ad-website.jpg",
+      sideImage1: "u-furniture.jpg",
+      sideImage2: "ux-adsologist-island.jpg",
+      final: "u-ad-website.jpg",
     },
     highlights: [
       "Innovative collage-style layout design",
@@ -79,15 +78,15 @@ export const exhibitionData = [
     tools: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Adobe InDesign"],
     description:
       'Led branding, packaging, and web design for "All in One SkinGlow" - a new beauty supplement by Korean wellness brand "MyIntent"',
-    image: "carousel-web-ui.jpg",
+    image: "u-furniture.jpg", // UPDATED: Real image file
     category: "UI UX",
     tags: ["UI UX"],
     detailImages: {
-      hero1: "carousel-web-ui-hero1.jpg",
-      hero2: "carousel-web-ui-hero2.jpg",
-      sideImage1: "carousel-web-ui-side1.jpg",
-      sideImage2: "carousel-web-ui-side2.jpg",
-      final: "carousel-web-ui-final.jpg",
+      hero1: "u-furniture.jpg",
+      hero2: "u-ad-website.jpg",
+      sideImage1: "ux-adsologist-island.jpg",
+      sideImage2: "u-furniture.jpg",
+      final: "u-ad-website.jpg",
     },
     highlights: [
       "Dynamic carousel interface design",
@@ -103,15 +102,15 @@ export const exhibitionData = [
     tools: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Adobe InDesign"],
     description:
       "Directed complete brand identity for a downtown bar, including logo, character design, menu, patio mural, booth & interior design, and social content.",
-    image: "teddy-beer-branding.jpg",
+    image: "branding-bear.jpg", // ALREADY CORRECT
     category: "BRANDING",
     tags: ["BRANDING", "ILLUST"],
     detailImages: {
-      hero1: "teddy-beer-hero1.jpg",
-      hero2: "teddy-beer-hero2.jpg",
-      sideImage1: "teddy-beer-side1.jpg",
-      sideImage2: "teddy-beer-side2.jpg",
-      final: "teddy-beer-final.jpg",
+      hero1: "branding-bear.jpg",
+      hero2: "branding-bear.jpg",
+      sideImage1: "branding-bear.jpg",
+      sideImage2: "branding-bear.jpg",
+      final: "branding-bear.jpg",
     },
     highlights: [
       "Complete brand identity development",
@@ -127,15 +126,15 @@ export const exhibitionData = [
     tools: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Adobe InDesign"],
     description:
       "Led branding, packaging, web visuals, and social media design for a sweet potato snack under a mid-to-large F&B company.",
-    image: "fb-product-branding.jpg",
+    image: "b-rurd.jpg", // UPDATED: Real image file
     category: "BRANDING",
     tags: ["BRANDING", "GRAPHIC"],
     detailImages: {
-      hero1: "fb-product-hero1.jpg",
-      hero2: "fb-product-hero2.jpg",
-      sideImage1: "fb-product-side1.jpg",
-      sideImage2: "fb-product-side2.jpg",
-      final: "fb-product-final.jpg",
+      hero1: "b-rurd.jpg",
+      hero2: "Rectangle 1407.jpg",
+      sideImage1: "Rectangle 1407-1.jpg",
+      sideImage2: "Rectangle 1407-3.jpg",
+      final: "b-rurd.jpg",
     },
     highlights: [
       "Food and beverage packaging design",

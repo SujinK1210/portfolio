@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 const AnimatedNavItem = ({ text, active, onClick, isLandingPage }) => {
   const [isAnimating, setIsAnimating] = useState(false);
@@ -70,15 +70,17 @@ const AnimatedNavItem = ({ text, active, onClick, isLandingPage }) => {
 
   return (
     <StyledNavItem
-      active={active}
+      $active={active} // Changed to $active
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      isLandingPage={isLandingPage}
-      isAnimating={isAnimating}
+      $isLandingPage={isLandingPage} // Changed to $isLandingPage
+      $isAnimating={isAnimating} // Changed to $isAnimating
     >
       {displayText.split("").map((char, index) => (
-        <Letter key={`${text}-${index}`}>{char}</Letter>
+        <Letter key={`${text}-${index}`} $isAnimating={isAnimating}>
+          {char}
+        </Letter>
       ))}
     </StyledNavItem>
   );
@@ -90,7 +92,9 @@ export default function Navbar({
   isLandingPage = false,
 }) {
   return (
-    <NavbarContainer isLandingPage={isLandingPage}>
+    <NavbarContainer $isLandingPage={isLandingPage}>
+      {" "}
+      {/* Changed to $isLandingPage */}
       <AnimatedNavItem
         text="Entrance"
         active={activeItem === "entrance"}
@@ -129,7 +133,8 @@ const NavbarContainer = styled.nav`
   justify-content: center;
   align-items: center;
   padding: 1.5rem 0;
-  background-color: ${(props) => (props.isLandingPage ? "#f9f8f6" : "#111")};
+  background-color: ${(props) =>
+    props.$isLandingPage ? "#f9f8f6" : "#111"}; // Changed to $isLandingPage
   z-index: 20;
   transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   @media (max-width: 525px) {
@@ -148,13 +153,13 @@ const StyledNavItem = styled.div`
   width: 92px;
   text-align: center;
   cursor: pointer;
-  color: ${(props) => (props.isLandingPage ? "#111" : "#f9f8f6")};
+  color: ${(props) => (props.$isLandingPage ? "#111" : "#f9f8f6")};
   border-bottom: ${(props) =>
-    props.active
-      ? `2px solid ${props.isLandingPage ? "#111111" : "#f9f8f6"}`
+    props.$active
+      ? `2px solid ${props.$isLandingPage ? "#111111" : "#f9f8f6"}`
       : "2px solid transparent"};
   transition: border-bottom 0.3s ease, font-weight 0.3s ease;
-  font-weight: ${(props) => (props.active ? "600" : "400")};
+  font-weight: ${(props) => (props.$active ? "600" : "400")};
 
   display: flex;
   justify-content: center;
@@ -174,8 +179,8 @@ const Letter = styled.span`
   transition: transform 0.2s ease;
 
   ${(props) =>
-    props.isAnimating &&
-    `
-    animation: ${flipLetter} 0.3s ease-in-out;
-  `}
+    props.$isAnimating &&
+    css`
+      animation: ${flipLetter} 0.3s ease-in-out;
+    `}
 `;

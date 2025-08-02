@@ -1,12 +1,6 @@
 @import url("https://use.typekit.net/lfr1lhd.css");
 
 
-@font-face {
-  font-family: 'PP Editorial New';
-  src: url('/path/to/PPEditorialNew-Italic.woff2') format('woff2');
-  font-style: italic;
-  font-weight: 400;
-}
 
 /* PP Editorial New (Pangram Pangram) */
 @font-face {
